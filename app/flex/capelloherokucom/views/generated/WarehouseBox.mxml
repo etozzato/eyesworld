@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" label="Magazzino" xmlns:rx="org.restfulx.components.rx.*" styleName="mainApp">
+   <mx:Metadata>
+    [Event(name="logout", type="flash.events.Event")]
+  </mx:Metadata>
+  <mx:Script>
+  <![CDATA[
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import capelloherokucom.models.Maker;
+    import capelloherokucom.models.Model;
+    import capelloherokucom.models.Warehouse;
+    
+    import capelloherokucom.utils.Utils;
+    import org.restfulx.collections.ModelsCollection;
+    import mx.charts.series.items.PieSeriesItem;
+    import mx.charts.HitData;
+    
+    [Bindable]
+    private var panelHeight:int = Utils.panelHeight;
+    
+    private function showWarehouse(data:Object, field:String, index:Number, percentValue:Number):String {
+    	return data.itemsAvailable.toString() + " " + data.model;
+    }
+    
+    ]]></mx:Script>
+  <mx:Panel id="warehousePanel" title="Magazzino" width="70%" height="{panelHeight}" styleName="appPanel">
+    <mx:DataGrid dataProvider="{Rx.models.index(Warehouse)}" id="ordersGrid" width="100%" height="100%" fontSize="12">
+      <mx:columns>
+        <mx:DataGridColumn headerText="Fornitore" dataField="maker"  width="150" />
+        <mx:DataGridColumn headerText="Marchio" dataField="model"  width="200" />
+        <mx:DataGridColumn headerText="Quantitá" dataField="itemsAvailable" textAlign="center" width="130" />
+      </mx:columns>
+    </mx:DataGrid>
+  </mx:Panel>
+  <mx:Panel styleName="appPanel" width="30%" height="{panelHeight}" verticalAlign="top">
+    <mx:ControlBar width="100%">
+      <mx:Button label="Uscita" width="25%" height="30"
+        click="Utils.logout()"/>
+    </mx:ControlBar>
+    
+  </mx:Panel>
+</mx:HBox>

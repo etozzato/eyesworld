@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" label="Marchi"
+  xmlns:rx="org.restfulx.components.rx.*">
+  <mx:Script><![CDATA[
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import capelloherokucom.models.Model;
+    import capelloherokucom.models.Maker;
+    import capelloherokucom.utils.Utils;
+    
+
+    [Bindable]
+    private var panelHeight:int = Utils.panelHeight;
+
+    [Bindable]
+    private var model:Model = new Model();
+
+    private function newModel():void {
+      model = new Model();
+      modelsGrid.selectedIndex = -1;
+    }
+
+    private function saveModel():void {
+      updateModelProperties();
+      if (model.id) {
+        model.update({onSuccess: onModelUpdate});
+      } else {
+        model.create({onSuccess: onModelCreate});
+      }
+    }
+  
+    private function updateModelProperties():void {
+      model.name = nameTextInput.text;
+      model.discount = Number(discountTextInput.text);
+      model.maker = Maker(makerComboBox.selectedItem);
+    }
+   
+    private function destroyModel():void {
+      model.destroy({onSuccess: onModelDestroy});
+    }
+    
+    private function onModelSelect():void {
+      model = RxUtils.clone(modelsGrid.selectedItem) as Model;
+    }
+    
+    private function onModelCreate(result:Model):void {
+      model = new Model;
+    }
+    
+    private function onModelUpdate(result:Model):void {
+      modelsGrid.selectedItem = result;
+      onModelSelect();
+    }
+    
+    private function onModelDestroy(result:Model):void {
+      onModelCreate(result);
+    }    
+  ]]></mx:Script>
+  <mx:Panel id="modelsPanel" title="Gestione Marchi" styleName="appPanel" width="70%" height="{panelHeight}">
+  <mx:DataGrid dataProvider="{Rx.models.index(Model)}" id="modelsGrid" width="100%" height="100%" change="onModelSelect()" fontSize="12">
+    <mx:columns>
+      <mx:DataGridColumn headerText="Modello" dataField="name" />
+      <mx:DataGridColumn headerText="Marchio" dataField="maker" />
+      <mx:DataGridColumn headerText="Sconto Modello %" dataField="discount" width="150" textAlign="center" />
+      <mx:DataGridColumn headerText="Sconto Marchio %" dataField="parent_discount" width="150" textAlign="center" />
+    </mx:columns>
+  </mx:DataGrid>
+  </mx:Panel>
+  <mx:Panel id="budgetsPanel" styleName="appPanel" width="30%" height="{panelHeight}">
+    <mx:Form width="100%" height="100%">
+      <mx:FormItem label="Fornitore" width="100%">
+        <mx:ComboBox id="makerComboBox" width="200"
+          labelField="{Maker.LABEL}"
+          dataProvider="{Rx.models.index(Maker)}" prompt="..."
+          selectedItem="{model.maker}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Marchio" width="100%">
+        <mx:TextInput id="nameTextInput" width="100%" text="{model.name}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Sconto Marchio %" width="100%">
+        <mx:TextInput id="discountTextInput" width="100%" text="{model.discount}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Sconto Fornitore %" width="100%">
+        <mx:TextInput id="parentDiscountTextInput" width="100%" text="{model.parent_discount}" editable="false"/>
+      </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar width="100%">
+      <mx:Button label="Nuovo Marchio" width="100%" height="30"
+        click="newModel()"/>
+      <mx:Button label="Salva Marchio" width="50%" height="30"
+        click="saveModel()"/>
+      <mx:Button label="Elimina Marchio" styleName="deleteBtn" width="50%" height="30"
+        enabled="{RxUtils.canDeleteModel(model)}"
+        click="destroyModel()"/>
+    </mx:ControlBar>
+  </mx:Panel>
+</mx:HBox>

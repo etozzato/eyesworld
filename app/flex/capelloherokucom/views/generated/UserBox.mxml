@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" label="Negozi"
+  xmlns:rx="org.restfulx.components.rx.*">
+  <mx:Script><![CDATA[
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import capelloherokucom.models.User;
+    import capelloherokucom.utils.Utils;
+    
+
+    [Bindable]
+    private var panelHeight:int = Utils.panelHeight;
+
+    [Bindable]
+    private var user:User = new User();
+
+    private function newUser():void {
+      user = new User();
+      usersGrid.selectedIndex = -1;
+    }
+
+    private function saveUser():void {
+      updateModelProperties();
+      if (user.id) {
+        user.update({onSuccess: onUserUpdate});
+      } else {
+        user.create({onSuccess: onUserCreate});
+      }
+    }
+  
+    private function updateModelProperties():void {
+      user.email = emailTextInput.text;
+      user.username = usernameTextInput.text;
+      user.note = noteTextArea.text;
+      user.password = passwordTextInput.text;
+      user.active = activeCheckBox.selected;
+      user.admin = adminCheckBox.selected;
+  
+    }
+   
+    private function destroyUser():void {
+      user.destroy({onSuccess: onUserDestroy});
+    }
+    
+    private function onUserSelect():void {
+      user = RxUtils.clone(usersGrid.selectedItem) as User;
+    }
+    
+    private function onUserCreate(result:User):void {
+      user = new User;
+    }
+    
+    private function onUserUpdate(result:User):void {
+      usersGrid.selectedItem = result;
+      onUserSelect();
+    }
+    
+    private function onUserDestroy(result:User):void {
+      onUserCreate(result);
+    }    
+  ]]></mx:Script>
+  <mx:Panel id="usersPanel" title="Gestione Negozi" styleName="appPanel" width="70%" height="{panelHeight}">
+      
+      <mx:DataGrid dataProvider="{Rx.models.index(User)}" id="usersGrid" width="100%" height="100%" change="onUserSelect()" fontSize="12">
+        <mx:columns>
+          <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
+          <mx:DataGridColumn headerText="Nome" dataField="username" width="150" />
+          <mx:DataGridColumn headerText="Email" dataField="email" width="200" />
+          <mx:DataGridColumn headerText="Password" dataField="password" />
+        </mx:columns>
+      </mx:DataGrid>
+      
+    <mx:ControlBar width="100%">
+    </mx:ControlBar>
+  </mx:Panel>
+  <mx:Panel id="editUsersPanel" styleName="appPanel" width="30%" height="{panelHeight}">
+    <mx:Form width="100%" height="100%">
+      <mx:FormItem label="Nome" width="100%">
+        <mx:TextInput id="usernameTextInput" width="100%" text="{user.username}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Email" width="100%">
+        <mx:TextInput id="emailTextInput" width="100%" text="{user.email}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Password" width="100%">
+        <mx:TextInput id="passwordTextInput" width="100%" text="{user.password}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Annotazioni" width="100%">
+        <mx:TextArea id="noteTextArea" width="100%" height="200" text="{user.note}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Attivo" width="100%">
+        <mx:CheckBox id="activeCheckBox" selected="{user.active}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Amministratore" width="100%">
+        <mx:CheckBox id="adminCheckBox" selected="{user.admin}"/>
+      </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar width="100%">
+      <mx:Button label="Nuovo Negozio" width="25%" height="30"
+        click="newUser()"/>
+      <mx:Button label="Salva Negozio" width="25%" height="30"
+        click="saveUser()"/>
+      <mx:Button label="Elimina Negozio" styleName="deleteBtn" width="25%" height="30"
+        enabled="{RxUtils.canDeleteModel(user)}"
+        click="destroyUser()"/>
+    </mx:ControlBar>
+  </mx:Panel>
+</mx:HBox>

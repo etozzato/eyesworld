@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <title>SmartSearch by TrueInteractive</title>
+  <%= stylesheet_link_tag "main.css" %>
+  <%= javascript_include_tag :defaults %>
+</head>
+<body>
+  <div id="container">
+
+    <div id="right">
+      <% render :partial => "shared/search" %>
+      <span id='login'></span>
+  <br><br>
+  <script type="text/javascript">
+  w_tipo = "mediacloud";
+  w_width = "300px";
+  w_css = "marrone";
+  w_col1 = "1275b8";
+  w_col2 = "5fc8ff";
+  w_col3 = "1275b8";
+  w_font = "Arial";
+  w_layout = "sq";
+  w_itemnum = 4;
+  w_page = 1;
+  w_intest = "Ultime novit&agrave; dalle Rete:";
+  w_abs = 1;
+  </script>
+  <script type="text/javascript" src="http://widget.liquida.it/widget_start.js"></script>
+
+
+    </div>
+    <div class="clear"></div>
+    
+    <div id="content-box">
+      <%= yield %>
+      <div class="clear"></div>
+    </div>
+    
+    
+    <div id="footer"> 
+      &copy; 2006-2009 <a href="http://www.trueinteractive.net" style="color:#539212;">True Interactive</a> &copy; 2006-2009.
+    </div> 
+    <div style='margin:0px auto'><script language='javascript' src='http://app.headcounters.com/digits.js'></script></div> 
+    </div>
+
+    <div id="key" style='font-size:8pt;padding-top:10px;margin:0px auto; width:500px; text-align:center'>
+      <% if logged_in? %>
+        <%= link_to 'Entra', app_path %>
+        <%= link_to 'Admin', admin_path if current_user.admin? %>
+        <%= link_to 'Esci', logout_path %>
+      <% else %>
+        <input id="k1" class='lite' type="text" value="" size="1" maxlength="1" />
+        <input id="k2" class='lite' type="text" value="" size="1" maxlength="1" />
+        <input id="k3" class='lite' type="text" value="" size="1" maxlength="1" onKeyUp="javascript:unlock()" />
+      <% end %>
+      <br><br>
+      <%= render :partial => "shared/flash_notices" %>
+    </div>
+  
+  </div>
+</body>
+</html>
+
+
+<% if Rails.env.development? && !logged_in? %>
+  <script>
+  $('login').innerHTML = '<div style=\'margin-top:20px;margin-left:10px;\'><form action="/session" method="post">\n  <p><input id="user_email" name="user_email" type="text" value="email" size="20" onFocus=\'if(this.value=="email"){this.value=""}\' autocomplete="OFF" />\n <input id="user_pwd" name="user_pwd" type="text" value="password" onFocus=\'if(this.value=="password"){this.type="password";this.value=""}\' size="20" autocomplete="OFF" /></p>\n <input type="submit" value=" ENTRA " id="search_btn">\n</form>'
+  </script>
+<% end -%>

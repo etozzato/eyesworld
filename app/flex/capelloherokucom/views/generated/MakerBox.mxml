@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" label="Fornitori"
+  xmlns:rx="org.restfulx.components.rx.*">
+  <mx:Script><![CDATA[
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import capelloherokucom.models.Maker;
+    import capelloherokucom.utils.Utils;
+    
+
+    [Bindable]
+    private var panelHeight:int = Utils.panelHeight;
+
+    [Bindable]
+    private var maker:Maker = new Maker();
+
+    private function newMaker():void {
+      maker = new Maker();
+      makersGrid.selectedIndex = -1;
+    }
+
+    private function saveMaker():void {
+      updateModelProperties();
+      if (maker.id) {
+        maker.update({onSuccess: onMakerUpdate});
+      } else {
+        maker.create({onSuccess: onMakerCreate});
+      }
+    }
+  
+    private function updateModelProperties():void {
+      maker.name = nameTextInput.text;
+      maker.discount = Number(discountTextInput.text);
+    }
+   
+    private function destroyMaker():void {
+      maker.destroy({onSuccess: onMakerDestroy});
+    }
+    
+    private function onMakerSelect():void {
+      maker = RxUtils.clone(makersGrid.selectedItem) as Maker;
+    }
+    
+    private function onMakerCreate(result:Maker):void {
+      maker = new Maker;
+    }
+    
+    private function onMakerUpdate(result:Maker):void {
+      makersGrid.selectedItem = result;
+      onMakerSelect();
+    }
+    
+    private function onMakerDestroy(result:Maker):void {
+      onMakerCreate(result);
+    }    
+  ]]></mx:Script>
+  <mx:Panel id="makersPanel" title="Gestione Fornitori" styleName="appPanel" width="70%" height="{panelHeight}">
+    <mx:DataGrid dataProvider="{Rx.models.index(Maker)}" id="makersGrid" width="100%" height="100%" change="onMakerSelect()" fontSize="12">
+      <mx:columns>
+        <mx:DataGridColumn headerText="Fornitore" dataField="name" />
+        <mx:DataGridColumn headerText="Sconto %" dataField="discount" width="100" textAlign="center" />
+    </mx:columns>
+    </mx:DataGrid>
+  </mx:Panel>
+  <mx:Panel id="budgetsPanel" styleName="appPanel" width="30%" height="{panelHeight}">
+    <mx:Form width="100%" height="100%">
+      <mx:FormItem label="Fornitore" width="100%">
+        <mx:TextInput id="nameTextInput" width="100%" text="{maker.name}"/>
+      </mx:FormItem>
+      <mx:FormItem label="Sconto %" width="100%">
+        <mx:TextInput id="discountTextInput" width="100%" text="{maker.discount}"/>
+      </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar width="100%">
+      <mx:Button label="Nuovo Fornitore" width="25%" height="30"
+        click="newMaker()"/>
+      <mx:Button label="Salva Fornitore" width="25%" height="30"
+        click="saveMaker()"/>
+      <mx:Button label="Elimina Fornitore" styleName="deleteBtn" width="25%" height="30"
+        enabled="{RxUtils.canDeleteModel(maker)}"
+        click="destroyMaker()"/>
+    </mx:ControlBar>
+  </mx:Panel>
+</mx:HBox>

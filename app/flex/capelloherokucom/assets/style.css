@@ -1,0 +1,29 @@
+.deleteBtn {
+  color: #ff0000;
+}
+.newButton {
+  color: #005500;
+}
+
+.mainContainer{
+  backgroundColor: #deb887;
+}
+
+.mainApp {
+  borderColor: #BAD5B6;
+  color: #222222;
+  fontFamily: 'Arial';
+  fontSize: 12;
+  fontStyle: normal;
+  width:'100%';
+}
+
+.appPanel {
+  cornerRadius: 9;
+  dropShadowEnabled: true;
+  borderStyle: solid;
+  borderThickness: 1;
+  backgroundColor: #D2DBFC;
+  borderColor: #c0c0c0;
+}
+

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" label="Ordini" xmlns:rx="org.restfulx.components.rx.*" styleName="mainApp">
+   <mx:Metadata>
+    [Event(name="logout", type="flash.events.Event")]
+  </mx:Metadata>
+  <mx:Style source="../../assets/style.css" />
+  
+  <mx:Script><![CDATA[
+    import mx.formatters.DateFormatter;
+    import org.restfulx.Rx;
+    import org.restfulx.utils.RxUtils;
+    import capelloherokucom.models.Order;
+    import capelloherokucom.models.User;
+    import capelloherokucom.models.Maker;
+    import capelloherokucom.models.Model;
+    import capelloherokucom.models.Budget;
+    import capelloherokucom.models.Increment;
+    import capelloherokucom.models.Warehouse;
+    import mx.controls.Alert;
+    import mx.events.CloseEvent;
+    import capelloherokucom.utils.Utils;
+    
+    [Bindable]
+    private var panelHeight:int = Utils.panelHeight;
+    
+    [Bindable]
+    private var order:Order = new Order();
+
+    [Bindable]
+    private var current_user:User
+
+    private function getCurrentUser():void {
+      current_user = null;
+      Rx.http(setCurrentUser).invoke("current_user", {  }, "GET", true);
+    }
+    
+    private function setCurrentUser(result:User):void {
+      current_user = result;
+    }
+
+    private function newOrder():void{
+    if(new_order_form.visible){
+      Alert.show("L'ordine non é stato salvato, abbandonare le modifiche e crearne uno nuovo?", "Conferma", Alert.YES|Alert.NO, this, newOrderDoEvent, null, Alert.YES);
+    } else { newOrderDo(); }
+    }    
+
+    private function newOrderDoEvent(event:CloseEvent):void{
+      if (event.detail == Alert.YES) {
+        newOrderDo();
+      }
+    }
+
+    private function newOrderDo():void {
+      order = new Order();
+      ordersGrid.selectedIndex = -1;
+      new_order_form.visible = true;
+      save_btn.enabled = true;
+      orderDateDateField.selectedDate = current_user.lastOrderDate;
+      makerComboBox.selectedItem = current_user.lastOrderMaker;
+      modelComboBox.dataProvider = Rx.models.index(Model);
+      modelComboBox.selectedItem = current_user.lastOrderModel;
+      getCurrentUser();
+    }
+
+    private function saveOrder():void {
+      if ((makerComboBox.selectedIndex != -1) && (modelComboBox.selectedIndex != -1) && itemsRequiredTextInput.text != '0' && priceTextInput.text != '0'){
+        new_order_form.visible = false;
+        save_btn.enabled = false;
+        updateModelProperties();
+        order.create({onSuccess: onOrderCreate});
+      } else {
+        Alert.show("Uno o piú campi necessari alla creazione dell'ordine non sono stati compilati.", "Errore", Alert.OK, this, null, null);
+      }
+    }
+  
+    private function updateModelProperties():void {
+      order.itemsRequired = int(itemsRequiredTextInput.text);
+      order.confidentialPrice = Number(confidential_priceTextInput.text);
+      order.discount = Number(discountInput.text);
+      order.price = Number(priceTextInput.text);
+      order.total = Number(totalTextInput.text);
+      order.orderDate = orderDateDateField.selectedDate;
+      order.maker = Maker(makerComboBox.selectedItem);
+      order.model = Model(modelComboBox.selectedItem);
+    }
+   
+     private function deleteOrder():void{
+      Alert.show("Eliminare definitivamente questo ordine?", "Conferma", Alert.YES|Alert.NO, this, destroyOrder, null, Alert.YES);
+     }
+   
+    private function destroyOrder(event:CloseEvent):void {
+      if (event.detail == Alert.YES) {
+          order.destroy({onSuccess: onOrderDestroy});
+          Rx.models.reset(Warehouse); 
+       }
+    }
+    
+    private function onOrderSelect():void {
+      modelComboBox.dataProvider = Rx.models.index(Model);
+      order = RxUtils.clone(ordersGrid.selectedItem) as Order;
+      new_order_form.visible = true;
+      save_btn.enabled = true;
+    }
+    
+    private function onOrderCreate(result:Order):void {
+      getCurrentUser();
+      order = new Order;
+    }
+    
+    private function onOrderUpdate(result:Order):void {
+      ordersGrid.selectedItem = result;
+      onOrderSelect();
+    }
+    
+    private function onOrderDestroy(result:Order):void {
+      onOrderCreate(result);
+      getCurrentUser();
+    }
+    
+    private function update_total():void {
+      priceTextInput.text = (toFixed(Number(confidential_priceTextInput.text) - Number(confidential_priceTextInput.text) / 100 * Number(discountInput.text), 2)).toString()
+      order.total = toFixed(Number(itemsRequiredTextInput.text)*Number(priceTextInput.text),2);
+    }
+    
+    private function formatDate(item:Object, column:DataGridColumn):String{
+      var df:DateFormatter = new DateFormatter();
+      df.formatString = "DD/MM/YYYY";
+      var value:Object = item[column.dataField];
+      return df.format(value);
+    }
+  
+    private function formatCurrency(item:Object, column:DataGridColumn):String{
+    return currency(item[column.dataField]);
+   }
+  
+      private function numeriko(str:String):Number{
+          return Number(str);
+      }
+  
+  private function currency(val:Number):String{
+    return Utils.getCostFormatter().format(val)
+  }
+  
+  private function update_bar_color():void{
+    var level:Number = Math.round(budget_bar.value);
+    var color:String;
+
+    if (level <= 40) { color = "#4c76fd"; }    
+    if (level >= 40) { color = "#5cc030"; }    
+    if (level >= 60) { color = "#e8da3a"; }    
+    if (level >= 80) { color = "#e88c3a"; }    
+    if (level >= 90) { color = "#FF0000"; }    
+    
+    budget_bar.setStyle("barColor", color);
+  }
+  
+  private function toFixed(number, digits:Number):Number {
+  	var factor:Number = Math.pow(10,digits);
+  	return (Math.round(Number(number) * factor)/factor);
+  }
+
+  private function apply_discount_maker():void {
+    modelComboBox.dataProvider = makerComboBox.selectedItem.models;
+    discountInput.text = makerComboBox.selectedItem.discount;
+  }
+
+  private function apply_discount_model():void {
+    if (modelComboBox.selectedItem.discount >= 0){
+      discountInput.text = modelComboBox.selectedItem.discount;
+    }
+  }
+
+  ]]></mx:Script>
+  
+
+  <mx:Panel id="ordersPanel" title="Gestione Ordini" styleName="appPanel" width="70%" height="{panelHeight}">
+    <mx:TextInput id="progress_value" text="{Number(current_user.ordered)/Number(current_user.budget.value)*100}"  updateComplete="budget_bar.setProgress(Number(progress_value.text), 100);update_bar_color()"  visible="false" includeInLayout="false"/>
+    <mx:DataGrid dataProvider="{Rx.models.index(Order)}" id="ordersGrid" width="100%" height="100%" change="onOrderSelect()" fontSize="12" updateComplete="getCurrentUser()">
+      <mx:columns>
+        <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
+        <mx:DataGridColumn headerText="Fornitore" dataField="maker" width="150" />
+        <mx:DataGridColumn headerText="Marchio" dataField="model" width="200" />
+        <mx:DataGridColumn headerText="Prezzo Conf." dataField="confidentialPrice" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
+        <mx:DataGridColumn headerText="Sconto" dataField="discount" textAlign="center" />
+        <mx:DataGridColumn headerText="Prezzo Effettivo" dataField="price" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
+        <mx:DataGridColumn headerText="Ordinato" width="130" dataField="itemsRequired" textAlign="center" />
+        <mx:DataGridColumn headerText="Totale" dataField="total" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
+        <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" textAlign="center" />
+        <mx:DataGridColumn headerText="Inserimento" dataField="createdAt" labelFunction="formatDate" textAlign="center" />
+      </mx:columns>
+    </mx:DataGrid>
+    <mx:ControlBar width="100%">
+      <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()"/>
+    </mx:ControlBar>
+    <mx:Form width="100%">
+      <mx:FormItem label="Totale Ordini:" width="100%">
+        <mx:Text id="user_order" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.ordered)}" width="100" textAlign="right" />
+      </mx:FormItem>
+      <mx:FormItem label="Ordinato/Ricevuto:" width="100%">
+        <mx:Text id="user_ordered" fontFamily="Courier New" fontSize="14" height="20" text="{current_user.required}/{current_user.received}" width="100" textAlign="left" />
+      </mx:FormItem>
+      <mx:FormItem label="Ultimo Ordine:" width="100%">
+        <mx:Text id="user_last_order" fontFamily="Courier New" fontSize="14" height="20" text="{current_user.lastOrderDate} ({current_user.lastOrderMaker}/{current_user.lastOrderMaker})" width="100" textAlign="left" />
+      </mx:FormItem>
+      <mx:FormItem label="Budget Annuale:" width="100%">
+        <mx:Text id="user_budget" text="{currency(current_user.budget.value)}" fontFamily="Courier New" fontSize="14" height="20" width="100" textAlign="right"/>
+      </mx:FormItem>
+      <mx:FormItem label="Budget Residuo:" width="100%">
+        <mx:Text id="user_available_budget" text="{currency(Number(current_user.budget.value) - Number(current_user.ordered))}" fontFamily="Courier New" fontSize="14" height="20" width="100" textAlign="right">
+        </mx:Text>
+      </mx:FormItem>
+  </mx:Form>
+  </mx:Panel>
+  <mx:Panel title="Nuovo Ordine" styleName="appPanel" width="30%" height="{panelHeight}">
+        <mx:Form width="100%" height="100%" id="new_order_form" visible="false">
+          <mx:FormItem label="Fornitore" width="100%" fontStyle="normal">
+        <mx:ComboBox id="makerComboBox" width="200"
+          labelField="{Maker.LABEL}"
+          dataProvider="{Rx.models.index(Maker)}" prompt="..."
+          selectedItem="{order.maker}"
+          change="apply_discount_maker()"/>
+      </mx:FormItem>
+
+      <mx:FormItem label="Marchio" width="100%" fontStyle="normal">
+        <mx:ComboBox id="modelComboBox" width="200"
+          labelField="{Model.LABEL}"
+          dataProvider="{Rx.models.index(Model)}" prompt="..."
+          selectedItem="{order.model}"
+          change="apply_discount_model()"/>
+      </mx:FormItem>
+      <mx:FormItem label="Quantitá" width="100%" fontStyle="normal">
+        <mx:TextInput id="itemsRequiredTextInput" width="100%" text="{order.itemsRequired}" change="update_total()"/>
+      </mx:FormItem>
+      <mx:FormItem label="Prezzo Conf." width="100%" fontStyle="normal">
+        <mx:TextInput id="confidential_priceTextInput" width="100%" text="{order.confidentialPrice}" change="update_total()"/>
+      </mx:FormItem>
+      <mx:FormItem label="Sconto %" width="100%" fontStyle="normal">
+        <mx:TextInput id="discountInput" width="100%" text="{order.discount}" change="update_total()" />
+      </mx:FormItem>
+      <mx:FormItem label="Prezzo Effettivo" width="100%" fontStyle="normal">
+        <mx:TextInput id="priceTextInput" width="100%" text="{order.price}" editable="false"/>
+      </mx:FormItem>
+      <mx:FormItem label="Totale" width="100%" fontStyle="normal">
+        <mx:TextInput id="totalTextInput" width="100%" text="{order.total}" editable="false"/>
+      </mx:FormItem>
+      <mx:FormItem label="Data" width="100%" fontStyle="normal">
+        <mx:DateField id="orderDateDateField" selectedDate="{order.orderDate}" showToday="true" formatString="DD/MM/YYYY"/>
+      </mx:FormItem>
+    </mx:Form>
+    <mx:ControlBar width="100%">
+      <mx:Button label="Nuovo" width="50%" height="30"
+        click="newOrder()" styleName="newButton" />
+      <mx:Button label="Salva" width="50%" height="30"
+        click="saveOrder()" id="save_btn" enabled="false"/>
+      <mx:Button label="Elimina" width="50%" height="30"
+        enabled="{RxUtils.canDeleteModel(order)}"
+        click="deleteOrder()" styleName="deleteBtn" />
+      <mx:Button label="Uscita" width="50%" height="30"
+        click="Utils.logout()"/>
+    </mx:ControlBar>
+  </mx:Panel>
+</mx:HBox>
