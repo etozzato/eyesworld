@@ -1,7 +1,0 @@
-development:
-  adapter: mysql
-  encoding: utf8
-  database: capello
-  username: root
-  password:
-  host: localhost
