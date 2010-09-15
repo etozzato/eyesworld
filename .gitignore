@@ -1,0 +1,12 @@
+bin/admin
+bin/backup
+bin/build
+bin/web
+log/backup.log
+log/development.log
+.actionScriptProperties
+.actionScriptProperties_admin
+.actionScriptProperties_app
+.flexProperties
+.gems
+.git_heroku/COMMIT_EDITMSG
