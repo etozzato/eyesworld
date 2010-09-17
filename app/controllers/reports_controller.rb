@@ -19,7 +19,7 @@ class ReportsController < ApplicationController
 
     @orders = Order.all(options)
 
-    csv_string = CSV.generate do |csv|
+    csv_string = CSV.generate('/tmp/csvexport') do |csv|
       csv << [
         'id_ordine',
         'ordinato', 
