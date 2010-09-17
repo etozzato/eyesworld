@@ -7,6 +7,13 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resources :increments
   map.resources :warehouses
+  map.resources :reports, 
+                  :collection => {
+                    :ordini => :get
+                  },
+                  :member => {
+                    :ordini => :get
+                  }
   
   map.resources :session
   
@@ -18,6 +25,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.app 'app/', :controller => 'app'
   map.admin 'admin/', :controller => 'app', :action => 'admin'
-  
+
   map.current_user '/current_user', :controller => 'session', :action => 'index'
 end

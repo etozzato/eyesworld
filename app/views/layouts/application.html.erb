@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-type" content="text/html; charset=ASCII-8BIT" />
   <title>SmartSearch by TrueInteractive</title>
   <%= stylesheet_link_tag "main.css" %>
   <%= javascript_include_tag :defaults %>
@@ -13,6 +13,8 @@
       <% render :partial => "shared/search" %>
       <span id='login'></span>
   <br><br>
+
+<% if controller_name == 'homepage' %>
   <script type="text/javascript">
   w_tipo = "mediacloud";
   w_width = "300px";
@@ -28,7 +30,7 @@
   w_abs = 1;
   </script>
   <script type="text/javascript" src="http://widget.liquida.it/widget_start.js"></script>
-
+ <% end -%>
 
     </div>
     <div class="clear"></div>
@@ -49,6 +51,7 @@
       <% if logged_in? %>
         <%= link_to 'Entra', app_path %>
         <%= link_to 'Admin', admin_path if current_user.admin? %>
+        <%= link_to 'Reports', reports_path if current_user.admin? %>
         <%= link_to 'Esci', logout_path %>
       <% else %>
         <input id="k1" class='lite' type="text" value="" size="1" maxlength="1" />

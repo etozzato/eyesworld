@@ -1,0 +1,29 @@
+<div style='margin:30px'>
+  <h3>Report per Excel</h3>
+  
+  <ul>
+    <li><%= link_to 'ordini', ordini_reports_path %></li>
+  </ul>
+  
+  <ul>
+    <li><%= link_to 'ordini per id_negozio 2', ordini_report_path(2) %></li>
+  </ul>
+
+  <ul>
+    <li><%= link_to 'ordini raggruppati per marchio', ordini_reports_path(:marchio=>true) %></li>
+  </ul>
+    
+  <ul>
+    <li><%= link_to 'ordini raggruppati per fornitore', ordini_reports_path(:fornitore=>true) %></li>
+  </ul>
+
+  <ul>
+    <li><%= link_to 'ordini per id_negozio 2 raggruppati per marchio', ordini_report_path(2, :marchio=>true) %></li>
+  </ul>
+
+  <ul>
+    <li><%= link_to 'ordini per id_negozio 2 raggruppati per fornitore', ordini_report_path(2, :fornitore=>true) %></li>
+  </ul>
+
+
+</div>
