@@ -58,7 +58,7 @@
     <mx:DataGrid dataProvider="{Rx.models.index(Maker)}" id="makersGrid" width="100%" height="100%" change="onMakerSelect()" fontSize="12">
       <mx:columns>
         <mx:DataGridColumn headerText="Fornitore" dataField="name" />
-        <mx:DataGridColumn headerText="Sconto %" dataField="discount" width="100" textAlign="center" />
+        <mx:DataGridColumn headerText="Sconto %" dataField="discount" textAlign="center" />
     </mx:columns>
     </mx:DataGrid>
   </mx:Panel>

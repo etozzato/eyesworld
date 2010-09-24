@@ -10,7 +10,7 @@ package capelloherokucom.controllers {
   public class ApplicationController extends RxApplicationController {
     private static var controller:ApplicationController;
     
-    public static var models:Array = [Budget, Maker, Model, Order, Sale, User, Increment, Warehouse]; /* Models */
+    public static var models:Array = [Budget, Maker, Model, Order, Sale, User, Increment, Warehouse, Stock]; /* Models */
     
     public static var commands:Array = []; /* Commands */
     

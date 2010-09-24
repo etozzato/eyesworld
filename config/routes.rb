@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sales
   map.resources :orders, :has_many => :increments
   map.resources :users
+  map.resources :stocks
   map.resources :increments
   map.resources :warehouses
   map.resources :reports, 

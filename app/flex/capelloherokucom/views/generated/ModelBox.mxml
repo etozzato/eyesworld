@@ -61,8 +61,8 @@
     <mx:columns>
       <mx:DataGridColumn headerText="Modello" dataField="name" />
       <mx:DataGridColumn headerText="Marchio" dataField="maker" />
-      <mx:DataGridColumn headerText="Sconto Modello %" dataField="discount" width="150" textAlign="center" />
-      <mx:DataGridColumn headerText="Sconto Marchio %" dataField="parent_discount" width="150" textAlign="center" />
+      <mx:DataGridColumn headerText="Sconto Modello %" dataField="discount" textAlign="center" />
+      <mx:DataGridColumn headerText="Sconto Marchio %" dataField="parent_discount" textAlign="center" />
     </mx:columns>
   </mx:DataGrid>
   </mx:Panel>

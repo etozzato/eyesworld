@@ -70,8 +70,8 @@
       <mx:DataGrid dataProvider="{Rx.models.index(Budget)}" id="budgetsList" width="100%" height="100%" change="onBudgetSelect()" fontSize="12">
         <mx:columns>
           <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
-          <mx:DataGridColumn headerText="Negozio" dataField="user" width="150" />
-          <mx:DataGridColumn headerText="Anno" dataField="year" width="200" />
+          <mx:DataGridColumn headerText="Negozio" dataField="user" />
+          <mx:DataGridColumn headerText="Anno" dataField="year" />
           <mx:DataGridColumn headerText="Importo" dataField="value" labelFunction="formatCurrency" />
         </mx:columns>
       </mx:DataGrid>

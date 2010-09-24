@@ -64,8 +64,8 @@
       <mx:DataGrid dataProvider="{Rx.models.index(User)}" id="usersGrid" width="100%" height="100%" change="onUserSelect()" fontSize="12">
         <mx:columns>
           <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
-          <mx:DataGridColumn headerText="Nome" dataField="username" width="150" />
-          <mx:DataGridColumn headerText="Email" dataField="email" width="200" />
+          <mx:DataGridColumn headerText="Nome" dataField="username" />
+          <mx:DataGridColumn headerText="Email" dataField="email" />
           <mx:DataGridColumn headerText="Password" dataField="password" />
         </mx:columns>
       </mx:DataGrid>
