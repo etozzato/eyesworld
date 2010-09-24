@@ -3,8 +3,8 @@ class ImagesController < ApplicationController
   before_filter :login_required, :only => [:new]
   skip_before_filter :verify_authenticity_token, :only => [:create]
   
-  require 'RMagick'
-  include Magick
+  #require 'RMagick'
+  #include Magick
 
   CTYPE_TO_EXT = {
     'image/jpeg' => 'jpg',
