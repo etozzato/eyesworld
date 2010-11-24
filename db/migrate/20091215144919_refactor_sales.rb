@@ -9,7 +9,6 @@ class RefactorSales < ActiveRecord::Migration
       t.references :user
       t.references :maker
       t.references :model
-
       t.timestamps
     end
     

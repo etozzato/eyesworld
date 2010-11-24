@@ -1,0 +1,3 @@
+# COMPILE
+cp .actionScriptProperties{_app/_admin} .actionScriptProperties
+rake rx:flex:build

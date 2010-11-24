@@ -99,7 +99,6 @@
   <mx:Panel id="skusPanel" title="Gestione Ricevuto" width="70%" height="{panelHeight}" styleName="appPanel">
     <mx:DataGrid dataProvider="{Rx.models.index(Order)}" id="ordersGrid" width="100%" height="100%" change="onOrderSelect()" fontSize="12" updateComplete="getCurrentUser()" >
       <mx:columns>
-        <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
         <mx:DataGridColumn headerText="Fornitore" dataField="maker"  width="150" />
         <mx:DataGridColumn headerText="Marchio" dataField="model"  width="200" />
         <mx:DataGridColumn headerText="Prezzo Conf." dataField="confidentialPrice" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />

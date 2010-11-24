@@ -22,9 +22,16 @@ class WarehousesController < ApplicationController
     
     sales = Sale.find_by_sql(["SELECT sales.model_id, sum(sales.items_sold) as sold FROM sales WHERE sales.user_id = ? AND (sale_date BETWEEN ? AND ?) GROUP BY sales.model_id", current_user.id, "#{Time.now.year}-01-01", "#{Time.now.year}-12-31"])
 
+    returns = Return.find_by_sql(["SELECT returns.model_id, sum(returns.items_returned) as returned FROM returns WHERE returns.user_id = ? AND (return_date BETWEEN ? AND ?) GROUP BY returns.model_id", current_user.id, "#{Time.now.year}-01-01", "#{Time.now.year}-12-31"])
+
     sales.each do |s|
       w = @warehouses.detect {|el| el.model_id == s.model_id}
       w.items_available = w.items_available.to_i - s.sold.to_i if w
+    end
+    
+    returns.each do |s|
+      w = @warehouses.detect {|el| el.model_id == s.model_id}
+      w.items_available = w.items_available.to_i - s.returned.to_i if w
     end
     
     @warehouses = @warehouses.sort_by { |el| el.model.name }

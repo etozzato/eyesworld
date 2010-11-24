@@ -154,9 +154,9 @@
     budget_bar.setStyle("barColor", color);
   }
   
-  private function toFixed(number, digits:Number):Number {
-  	var factor:Number = Math.pow(10,digits);
-  	return (Math.round(Number(number) * factor)/factor);
+  private function toFixed(number:Number, digits:Number):Number {
+    var factor:Number = Math.pow(10,digits);
+    return (Math.round(Number(number) * factor)/factor);
   }
 
   private function apply_discount_maker():void {
@@ -177,7 +177,6 @@
     <mx:TextInput id="progress_value" text="{Number(current_user.ordered)/Number(current_user.budget.value)*100}"  updateComplete="budget_bar.setProgress(Number(progress_value.text), 100);update_bar_color()"  visible="false" includeInLayout="false"/>
     <mx:DataGrid dataProvider="{Rx.models.index(Order)}" id="ordersGrid" width="100%" height="100%" change="onOrderSelect()" fontSize="12" updateComplete="getCurrentUser()">
       <mx:columns>
-        <mx:DataGridColumn headerText="ID" dataField="id" width="40" textAlign="center" />
         <mx:DataGridColumn headerText="Fornitore" dataField="maker" width="150" />
         <mx:DataGridColumn headerText="Marchio" dataField="model" width="200" />
         <mx:DataGridColumn headerText="Prezzo Conf." dataField="confidentialPrice" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
@@ -186,13 +185,12 @@
         <mx:DataGridColumn headerText="Ordinato" width="130" dataField="itemsRequired" textAlign="center" />
         <mx:DataGridColumn headerText="Totale" dataField="total" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
         <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" textAlign="center" />
-        <mx:DataGridColumn headerText="Inserimento" dataField="createdAt" labelFunction="formatDate" textAlign="center" />
       </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar width="100%">
-      <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()"/>
+      <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()" visible="false"/>
     </mx:ControlBar>
-    <mx:Form width="100%">
+    <mx:Form width="100%" visible="false">
       <mx:FormItem label="Totale Ordini:" width="100%">
         <mx:Text id="user_order" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.ordered)}" width="100" textAlign="right" />
       </mx:FormItem>

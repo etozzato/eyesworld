@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" label="Venduto" xmlns:rx="org.restfulx.components.rx.*" styleName="mainApp">
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" label="Resi" xmlns:rx="org.restfulx.components.rx.*" styleName="mainApp">
    <mx:Metadata>
     [Event(name="logout", type="flash.events.Event")]
   </mx:Metadata>
@@ -12,7 +12,7 @@
     import capelloherokucom.models.Maker;
     import capelloherokucom.models.Model;
     import capelloherokucom.models.Warehouse;
-    import capelloherokucom.models.Sale;
+    import capelloherokucom.models.Return;
     
     import mx.controls.Alert;
     import mx.events.CloseEvent;
@@ -23,38 +23,38 @@
     private var panelHeight:int = Utils.panelHeight;
     
     [Bindable]
-    private var sale:Sale = new Sale();
+    private var ret:Return = new Return();
     
 
-    private function saveSale():void {
-      //sale = new Sale();
+    private function saveReturn():void {
+      //ret = new Return();
       updateModelProperties();
-      sale.create({onSuccess: onSaleCreate});
+      ret.create({onSuccess: onReturnCreate});
       Rx.models.reset(Warehouse); 
     }
     
     private function updateModelProperties():void {
-      sale.saleDate = saleDateField.selectedDate;
-      sale.itemsSold = int(itemsSold.value);
-      sale.model = modelComboBox.selectedItem.model;
-      sale.maker = modelComboBox.selectedItem.maker;
+      ret.returnDate = returnDateField.selectedDate;
+      ret.itemsReturned = int(itemsReturned.value);
+      ret.model = modelComboBox.selectedItem.model;
+      ret.maker = modelComboBox.selectedItem.maker;
     }
     
-    private function onSaleCreate():void {}
+    private function onReturnCreate():void {}
 
-    private function deleteSale():void{
-      Alert.show("Eliminare definitivamente questa vendita?", "Conferma", Alert.YES|Alert.NO, this, destroySale, null, Alert.YES);
+    private function deleteReturn():void{
+      Alert.show("Eliminare definitivamente questa vendita?", "Conferma", Alert.YES|Alert.NO, this, destroyReturn, null, Alert.YES);
     }
    
-    private function destroySale(event:CloseEvent):void {
+    private function destroyReturn(event:CloseEvent):void {
       if (event.detail == Alert.YES) {
-          sale.destroy();
+          ret.destroy();
           Rx.models.reset(Warehouse); 
        }
     }
 
-    private function onSaleSelect():void {
-      sale = RxUtils.clone(salesGrid.selectedItem) as Sale;
+    private function onReturnSelect():void {
+      ret = RxUtils.clone(returnsGrid.selectedItem) as Return;
       //update_btn.enabled = false;
     }
     
@@ -66,19 +66,19 @@
     }
     
     ]]></mx:Script>
-  <mx:Panel id="warehousePanel" title="Gestione Venduto" width="70%" height="{panelHeight}" styleName="appPanel">
+  <mx:Panel id="warehousePanel" title="Gestione Resi" width="70%" height="{panelHeight}" styleName="appPanel">
   
-  <mx:DataGrid dataProvider="{Rx.models.index(Sale)}" id="salesGrid" width="100%" height="100%" fontSize="12" change="onSaleSelect()">
+  <mx:DataGrid dataProvider="{Rx.models.index(Return)}" id="returnsGrid" width="100%" height="100%" fontSize="12" change="onReturnSelect()">
     <mx:columns>
       <mx:DataGridColumn headerText="Fornitore" dataField="maker" width="150" />
       <mx:DataGridColumn headerText="Marchio" dataField="model" width="200" />
-      <mx:DataGridColumn headerText="Venduto" width="130" dataField="itemsSold" textAlign="center" />
-      <mx:DataGridColumn headerText="Data Vendita" dataField="saleDate" labelFunction="formatDate" textAlign="center" />
+      <mx:DataGridColumn headerText="Resi" width="130" dataField="itemsReturned" textAlign="center" />
+      <mx:DataGridColumn headerText="Data Reso" dataField="returnDate" labelFunction="formatDate" textAlign="center" />
     </mx:columns>
   </mx:DataGrid>
   
   </mx:Panel>
-  <mx:Panel styleName="appPanel" width="30%" height="{panelHeight}" verticalAlign="top" title="Nuova Vendita">
+  <mx:Panel styleName="appPanel" width="30%" height="{panelHeight}" verticalAlign="top" title="Nuovo Reso">
     <mx:Form width="100%" height="100%" id="new_order_form" visible="true">
       <mx:FormItem width="100%" fontWeight="bold" label="Marchio:">
         <mx:ComboBox id="modelComboBox" width="100%" labelField="{Warehouse.LABEL}" data="itemsAvailable" dataProvider="{Rx.models.index(Warehouse)}" prompt="..." />
@@ -86,19 +86,19 @@
       <mx:FormItem width="100%" fontWeight="bold" label="Magazzino:">
         <mx:Text id="required" text="{modelComboBox.selectedItem.itemsAvailable}" height="20" width="100" textAlign="left"/>
       </mx:FormItem>
-      <mx:FormItem label="Venduti:" fontWeight="bold" width="100%">
-        <mx:NumericStepper id="itemsSold" value="0" maximum="{modelComboBox.selectedItem.itemsAvailable}" width="135" fontWeight="normal" textAlign="right" minimum="0"/>
+      <mx:FormItem label="Resi:" fontWeight="bold" width="100%">
+        <mx:NumericStepper id="itemsReturned" value="0" maximum="{modelComboBox.selectedItem.itemsAvailable}" width="135" fontWeight="normal" textAlign="right" minimum="0"/>
       </mx:FormItem>
       <mx:FormItem label="Data:" fontWeight="bold" width="100%">
-        <mx:DateField id="saleDateField" selectedDate="{sale.saleDate}" showToday="true" formatString="DD/MM/YYYY" width="135" fontWeight="normal"/>
+        <mx:DateField id="returnDateField" selectedDate="{ret.returnDate}" showToday="true" formatString="DD/MM/YYYY" width="135" fontWeight="normal"/>
       </mx:FormItem>
     </mx:Form>
     <mx:ControlBar width="100%">
       <mx:Button label="Salva" width="25%" height="30"
-        click="saveSale()" id="update_btn" enabled="true"/>
+        click="saveReturn()" id="update_btn" enabled="true"/>
       <mx:Button label="Elimina" width="25%" height="30"
-        enabled="{RxUtils.canDeleteModel(sale)}"
-        click="deleteSale()" styleName="deleteBtn" />
+        enabled="{RxUtils.canDeleteModel(ret)}"
+        click="deleteReturn()" styleName="deleteBtn" />
       <mx:Button label="Uscita" width="25%" height="30"
         click="Utils.logout()"/>
     </mx:ControlBar>

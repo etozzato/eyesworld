@@ -8,14 +8,14 @@
     <![CDATA[
       import org.restfulx.Rx;
       import capelloherokucom.controllers.ApplicationController;
-      
+
       private function init():void {
         ApplicationController.initialize();
       }
 
     ]]>
-    
-    
+
+
   </mx:Script>
 <mx:VDividedBox width="1250" height="100%"  liveDragging="false" verticalGap="5" horizontalAlign="left" verticalAlign="middle">
   <mx:LinkBar dataProvider="{mainViewStack}" direction="horizontal"  cornerRadius="9" dropShadowEnabled="true" borderStyle="solid"
@@ -23,6 +23,7 @@
   <mx:ViewStack id="mainViewStack" width="100%">
     <generated:OrderBox/>
     <generated:SkuBox/>
+    <generated:ReturnBox/>
     <generated:SaleBox/>
     <generated:WarehouseBox/>
   </mx:ViewStack>

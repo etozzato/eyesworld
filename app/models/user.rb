@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   
   has_many :orders, :dependent => :destroy, :order => 'order_date ASC'
   has_many :sales, :dependent => :destroy, :order => 'sale_date ASC'
+  has_many :returns, :dependent => :destroy, :order => 'return_date ASC'
 
   has_many :warehouses
   

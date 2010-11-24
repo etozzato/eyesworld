@@ -19,5 +19,4 @@ class AppController < ApplicationController
     response.headers["Cache-Control"] = 'no-store, no-cache, must-revalidate, max-age=0, pre-check=0, post-check=0'
   end
 
-  
 end

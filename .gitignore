@@ -10,3 +10,4 @@ log/*
 TODO
 capelloherokucom.tmproj
 test/*
+config/database.yml
