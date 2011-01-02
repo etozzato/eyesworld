@@ -1,9 +1,0 @@
-<div id="login-box">
-  <% if logged_in? %>
-    <%= link_to current_user.email, logout_url, :confirm => "log-out?" %>
-  <% else %>
-  <% form_for :user, :url => session_index_path, :html => {:id => "login-form"} do |f| %>
-    email: <%= f.text_field(:email, :onblur => "if ($('user_email').value != '') { $('login-form').submit();}") %>
-  <% end %>
-  <% end %>
-</div>
