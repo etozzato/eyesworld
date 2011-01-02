@@ -5,7 +5,9 @@ class Order < ActiveRecord::Base
   
   has_many :increments, :order => "received_at ASC"
 
-  named_scope :current, :conditions => ["order_date BETWEEN ? AND ?", "#{Time.now.year}-01-01", "#{Time.now.year}-12-31"]
-  named_scope :closing, :conditions => ["order_date BETWEEN ? AND ? AND items_required > items_received", "#{(Time.now.year)-1}-01-01", "#{(Time.now.year)-1}-12-31"]
+  # named_scope :current, :conditions => ["order_date BETWEEN ? AND ?", "#{Time.now.year}-01-01", "#{Time.now.year}-12-31"]
+  # named_scope :closing, :conditions => ["order_date BETWEEN ? AND ? AND items_required > items_received", "#{(Time.now.year)-1}-01-01", "#{(Time.now.year)-1}-12-31"]
+  
+  named_scope :current, :conditions => ["((order_date BETWEEN ? AND ?) OR (order_date BETWEEN ? AND ? AND items_required > items_received))", "#{Time.now.year}-01-01", "#{Time.now.year}-12-31","#{(Time.now.year)-1}-01-01", "#{(Time.now.year)-1}-12-31"]
   
 end
