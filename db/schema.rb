@@ -97,14 +97,6 @@ ActiveRecord::Schema.define(:version => 20101124094237) do
     t.datetime "updated_at"
   end
 
-  create_table "updates", :force => true do |t|
-    t.integer "order_id"
-    t.integer "from"
-    t.integer "to"
-    t.date    "created_at"
-    t.date    "updated_at"
-  end
-
   create_table "users", :force => true do |t|
     t.string   "email"
     t.string   "username"

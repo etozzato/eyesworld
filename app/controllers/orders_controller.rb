@@ -6,7 +6,7 @@ class OrdersController < ApplicationController
   # GET /orders.xml
   # GET /orders.fxml
   def index
-    @orders = current_user.orders.current
+    @orders = current_user.orders.current + current_user.orders.closing
     
     respond_to do |format|
       format.html # index.html.erb

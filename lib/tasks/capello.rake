@@ -1,6 +1,6 @@
-require 'config/environment.rb'
+#require 'config/environment.rb'
 
-task :magazzino do
+task :magazzino => :environment do
 
 models = Model.all(:select => 'id, name, maker_id')
 
