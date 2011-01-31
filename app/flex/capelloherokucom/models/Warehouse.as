@@ -7,7 +7,7 @@ package capelloherokucom.models {
   public class Warehouse extends RxModel {
     public static const LABEL:String = "model";
 
-    public var itemsAvailable:int = 0;
+    public var items:int = 0;
 
     [BelongsTo]
     public var maker:Maker;

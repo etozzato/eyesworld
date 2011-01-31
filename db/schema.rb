@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101124094237) do
+ActiveRecord::Schema.define(:version => 20110131010202) do
 
   create_table "budgets", :force => true do |t|
     t.integer  "year"
@@ -43,6 +43,21 @@ ActiveRecord::Schema.define(:version => 20101124094237) do
     t.float    "discount",   :default => -1.0
   end
 
+  create_table "order_archives", :force => true do |t|
+    t.integer  "items_required"
+    t.integer  "items_received"
+    t.float    "price"
+    t.float    "total"
+    t.date     "order_date"
+    t.integer  "user_id"
+    t.integer  "maker_id"
+    t.integer  "model_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "confidential_price", :default => 0.0
+    t.float    "discount",           :default => 0.0
+  end
+
   create_table "orders", :force => true do |t|
     t.integer  "items_required"
     t.integer  "items_received"
@@ -58,9 +73,31 @@ ActiveRecord::Schema.define(:version => 20101124094237) do
     t.float    "discount",           :default => 0.0
   end
 
+  create_table "return_archives", :force => true do |t|
+    t.integer  "items_returned"
+    t.date     "return_date"
+    t.integer  "user_id"
+    t.integer  "maker_id"
+    t.integer  "model_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "total"
+  end
+
   create_table "returns", :force => true do |t|
     t.integer  "items_returned"
     t.date     "return_date"
+    t.integer  "user_id"
+    t.integer  "maker_id"
+    t.integer  "model_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "total"
+  end
+
+  create_table "sale_archives", :force => true do |t|
+    t.integer  "items_sold"
+    t.date     "sale_date"
     t.integer  "user_id"
     t.integer  "maker_id"
     t.integer  "model_id"
@@ -97,6 +134,14 @@ ActiveRecord::Schema.define(:version => 20101124094237) do
     t.datetime "updated_at"
   end
 
+  create_table "updates", :force => true do |t|
+    t.integer "order_id"
+    t.integer "from"
+    t.integer "to"
+    t.date    "created_at"
+    t.date    "updated_at"
+  end
+
   create_table "users", :force => true do |t|
     t.string   "email"
     t.string   "username"
@@ -107,6 +152,16 @@ ActiveRecord::Schema.define(:version => 20101124094237) do
     t.integer  "budget_id"
     t.boolean  "active"
     t.boolean  "admin"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "current_budget"
+  end
+
+  create_table "warehouses", :force => true do |t|
+    t.integer  "items"
+    t.integer  "user_id"
+    t.integer  "maker_id"
+    t.integer  "model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

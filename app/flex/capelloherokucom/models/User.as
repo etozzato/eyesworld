@@ -18,6 +18,8 @@ package capelloherokucom.models {
 
     public var sessionKey:String = "";
     
+    public var currentBudget:Number = new Number;
+    
     [DateTime]
     public var sessionKeyExpiresOn:Date = new Date;
 
@@ -94,17 +96,17 @@ package capelloherokucom.models {
     }
 
     private function computedlastOrderDate():Date {
-      var last_order:Object = orders.getItemAt(orders.length-1);
+      var last_order:Object = orders.getItemAt(0);
       return last_order['orderDate'];
     }
     
     private function computedLastOrderMaker():Maker {
-      var last_order:Object = orders.getItemAt(orders.length-1);
+      var last_order:Object = orders.getItemAt(0);
       return last_order.maker;
     }
     
     private function computedLastOrderModel():Model {
-      var last_order:Object = orders.getItemAt(orders.length-1);
+      var last_order:Object = orders.getItemAt(0);
       return last_order.model;
     }
     

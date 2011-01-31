@@ -3,7 +3,7 @@ class ReturnsController < ApplicationController
   # GET /sales.xml
   # GET /sales.fxml
   def index
-    @returns = current_user.returns.current
+    @returns = Return.for_user(current_user.id)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -47,6 +47,12 @@ class ReturnsController < ApplicationController
   def create
     @return = Return.new(params[:return].merge({:user_id => current_user.id}))
 
+    ## Adjust Warehouse (-)
+    Warehouse.rem(current_user.id, @return.maker_id, @return.model_id, @return.items_returned)
+    
+    ## Adjust Budget (+)
+    Budget.add(current_user, @return.total)
+
     respond_to do |format|
       if @return.save
         flash[:notice] = 'Return was successfully created.'
@@ -66,10 +72,10 @@ class ReturnsController < ApplicationController
   # PUT /sales/1.fxml
   def update
     @return = Return.find(params[:id])
-    @saved = @return.update_attributes(params[:return])
+    #@saved = @return.update_attributes(params[:return])
 
     respond_to do |format|
-      if @saved
+      if @return
         flash[:notice] = 'Return was successfully updated.'
         format.html { redirect_to(@return) }
         format.xml  { head :ok }
@@ -87,6 +93,14 @@ class ReturnsController < ApplicationController
   # DELETE /sales/1.fxml
   def destroy
     @return = Return.find(params[:id])
+    
+    ## Adjust Warehouse (+)
+    Warehouse.add(current_user.id, @return.maker_id, @return.model_id, @return.items_returned)
+    
+    ## Adjust Budget (-)
+    Budget.rem(current_user, @return.total)
+    
+    
     @return.destroy
 
     respond_to do |format|

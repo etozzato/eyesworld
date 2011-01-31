@@ -19,6 +19,7 @@
     import mx.controls.Alert;
     import mx.events.CloseEvent;
     import capelloherokucom.utils.Utils;
+    import mx.events.DataGridEvent;
     
     [Bindable]
     private var panelHeight:int = Utils.panelHeight;
@@ -39,10 +40,8 @@
     }
 
     private function newOrder():void{
-    if(new_order_form.visible){
-      Alert.show("L'ordine non é stato salvato, abbandonare le modifiche e crearne uno nuovo?", "Conferma", Alert.YES|Alert.NO, this, newOrderDoEvent, null, Alert.YES);
-    } else { newOrderDo(); }
-    }    
+      newOrderDo();
+    }
 
     private function newOrderDoEvent(event:CloseEvent):void{
       if (event.detail == Alert.YES) {
@@ -63,7 +62,7 @@
     }
 
     private function saveOrder():void {
-      if ((makerComboBox.selectedIndex != -1) && (modelComboBox.selectedIndex != -1) && itemsRequiredTextInput.text != '0' && priceTextInput.text != '0'){
+      if ((makerComboBox.selectedIndex != -1) && (modelComboBox.selectedIndex != -1) && itemsRequiredTextInput.text != '0' && priceTextInput.text != '0' && orderDateDateField.selectedDate != null){
         new_order_form.visible = false;
         save_btn.enabled = false;
         updateModelProperties();
@@ -99,12 +98,15 @@
       modelComboBox.dataProvider = Rx.models.index(Model);
       order = RxUtils.clone(ordersGrid.selectedItem) as Order;
       new_order_form.visible = true;
-      save_btn.enabled = true;
+      save_btn.enabled = false;
     }
     
     private function onOrderCreate(result:Order):void {
       getCurrentUser();
-      order = new Order;
+      modelComboBox.dataProvider = Rx.models.index(Model);
+      ordersGrid.dispatchEvent(new DataGridEvent(DataGridEvent.HEADER_RELEASE, false, true, 7, null, 0, null, null, 0));
+      ordersGrid.selectedItem = result;
+      onOrderSelect();
     }
     
     private function onOrderUpdate(result:Order):void {
@@ -184,28 +186,19 @@
         <mx:DataGridColumn headerText="Prezzo Effettivo" dataField="price" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
         <mx:DataGridColumn headerText="Ordinato" width="130" dataField="itemsRequired" textAlign="center" />
         <mx:DataGridColumn headerText="Totale" dataField="total" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
-        <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" textAlign="center" />
+        <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" textAlign="center" sortDescending="true" />
       </mx:columns>
     </mx:DataGrid>
-    <mx:ControlBar width="100%">
-      <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()" visible="false"/>
+    
+    <mx:ControlBar width="100%" includeInLayout="false">
+      <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()" visible="false" includeInLayout="false"/>
     </mx:ControlBar>
-    <mx:Form width="100%" visible="false">
+    <mx:Form width="100%" visible="true">
       <mx:FormItem label="Totale Ordini:" width="100%">
-        <mx:Text id="user_order" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.ordered)}" width="100" textAlign="right" />
+        <mx:Text id="user_order" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.currentBudget*-1)}" width="100" textAlign="right" />
       </mx:FormItem>
-      <mx:FormItem label="Ordinato/Ricevuto:" width="100%">
-        <mx:Text id="user_ordered" fontFamily="Courier New" fontSize="14" height="20" text="{current_user.required}/{current_user.received}" width="100" textAlign="left" />
-      </mx:FormItem>
-      <mx:FormItem label="Ultimo Ordine:" width="100%">
-        <mx:Text id="user_last_order" fontFamily="Courier New" fontSize="14" height="20" text="{current_user.lastOrderDate} ({current_user.lastOrderMaker}/{current_user.lastOrderMaker})" width="100" textAlign="left" />
-      </mx:FormItem>
-      <mx:FormItem label="Budget Annuale:" width="100%">
+      <mx:FormItem label="Budget:" width="100%">
         <mx:Text id="user_budget" text="{currency(current_user.budget.value)}" fontFamily="Courier New" fontSize="14" height="20" width="100" textAlign="right"/>
-      </mx:FormItem>
-      <mx:FormItem label="Budget Residuo:" width="100%">
-        <mx:Text id="user_available_budget" text="{currency(Number(current_user.budget.value) - Number(current_user.ordered))}" fontFamily="Courier New" fontSize="14" height="20" width="100" textAlign="right">
-        </mx:Text>
       </mx:FormItem>
   </mx:Form>
   </mx:Panel>
@@ -241,8 +234,9 @@
       <mx:FormItem label="Totale" width="100%" fontStyle="normal">
         <mx:TextInput id="totalTextInput" width="100%" text="{order.total}" editable="false"/>
       </mx:FormItem>
-      <mx:FormItem label="Data" width="100%" fontStyle="normal">
-        <mx:DateField id="orderDateDateField" selectedDate="{order.orderDate}" showToday="true" formatString="DD/MM/YYYY"/>
+      <mx:FormItem label="Data Ordine" width="100%" fontStyle="normal">
+        <mx:DateField  id="orderDateDateField" firstDayOfWeek="1" dayNames="['D', 'L', 'M', 'M', 'G', 'V', 'S']" monthNames="['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio','Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']"
+         showToday="true" formatString="DD/MM/YYYY"/>
       </mx:FormItem>
     </mx:Form>
     <mx:ControlBar width="100%">

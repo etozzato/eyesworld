@@ -3,7 +3,7 @@ class SalesController < ApplicationController
   # GET /sales.xml
   # GET /sales.fxml
   def index
-    @sales = current_user.sales.current
+    @sales = Sale.for_user(current_user.id)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -47,6 +47,9 @@ class SalesController < ApplicationController
   def create
     @sale = Sale.new(params[:sale].merge({:user_id => current_user.id}))
 
+    ## Adjust Warehouse (-)
+    Warehouse.rem(current_user.id, @sale.maker_id, @sale.model_id, @sale.items_sold)
+
     respond_to do |format|
       if @sale.save
         flash[:notice] = 'Sale was successfully created.'
@@ -66,8 +69,8 @@ class SalesController < ApplicationController
   # PUT /sales/1.fxml
   def update
     @sale = Sale.find(params[:id])
-    @saved = @sale.update_attributes(params[:sale])
-
+    #@saved = @sale.update_attributes(params[:sale])
+    
     respond_to do |format|
       if @saved
         flash[:notice] = 'Sale was successfully updated.'
@@ -87,6 +90,10 @@ class SalesController < ApplicationController
   # DELETE /sales/1.fxml
   def destroy
     @sale = Sale.find(params[:id])
+    
+    ## Adjust Warehouse (+)
+    Warehouse.add(current_user.id, @sale.maker_id, @sale.model_id, @sale.items_sold)
+    
     @sale.destroy
 
     respond_to do |format|

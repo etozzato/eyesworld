@@ -1,0 +1,25 @@
+## control bar (orders)
+<mx:ControlBar width="100%">
+  <mx:ProgressBar label="Budget: {Math.round(budget_bar.value)} %" width="100%" minimum="0" labelPlacement="center" id="budget_bar" indeterminate="false" enabled="true" mode="manual"  fontWeight="normal" fontStyle="italic" barColor="#C03030" borderColor="#FFFFFF" trackHeight="15" progress="update_bar_color()" visible="false"/>
+</mx:ControlBar>
+
+if(new_order_form.visible){
+  Alert.show("L'ordine non é stato salvato, abbandonare le modifiche e crearne uno nuovo?", "Conferma", Alert.YES|Alert.NO, this, newOrderDoEvent, null, Alert.YES);
+} else { newOrderDo(); }
+
+<mx:FormItem label="Ordinato/Ricevuto:" width="100%">
+  <mx:Text id="user_ordered" fontFamily="Courier New" fontSize="14" height="20" text="{current_user.required}/{current_user.received}" width="100" textAlign="left" />
+</mx:FormItem>
+
+firstDayOfWeek="1" dayNames="['D', 'L', 'M', 'M', 'G', 'V', 'S']" monthNames="['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio','Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']"
+
+Rx.models.reset(Increment);
+orderIncrements = Rx.models.index(Increment, {nestedBy:[order]});
+
+update_btn.enabled = true;
+new_order_form.visible = true;
+
+selectedOrderPanel.title = "Ordine Selezionato: " + order.id.toString() + "/" + order.model;
+skuGrid.selectedItem = order;
+
+skuGrid.selectedIndex = 1;

@@ -29,7 +29,7 @@
       <mx:columns>
         <mx:DataGridColumn headerText="Fornitore" dataField="maker"  width="150" />
         <mx:DataGridColumn headerText="Marchio" dataField="model"  width="200" />
-        <mx:DataGridColumn headerText="Quantitá" dataField="itemsAvailable" textAlign="center" width="130" />
+        <mx:DataGridColumn headerText="Quantitá" dataField="items" textAlign="center" width="130" />
       </mx:columns>
     </mx:DataGrid>
   </mx:Panel>

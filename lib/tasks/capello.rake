@@ -1,5 +1,109 @@
-#require 'config/environment.rb'
+task :create_budget => :environment do
+  # User.all.each do |u|
+  #   budget = Budget.find_or_create_by_year_and_user_id_and_value(2011, u.id,0)
+  #   budget.user.update_attribute(:budget_id, budget.id) 
+  # end
+end
 
+
+task :archive_year_2010 => :environment do
+  count = 0
+  Order.find(:all,
+             :conditions => ["order_date <= ? AND items_required = items_received", "2010-12-31"],
+             :order => "order_date DESC").each do |o|
+    count += 1
+    puts "OrderArchive #{o.id}, #{o.items_received} #{o.items_required} (#{count})"
+    OrderArchive.create(o.attributes)
+    o.destroy
+  end
+
+  count = 0
+  Sale.find(:all,
+            :conditions => ["sale_date <= ? ", "2010-12-31"],
+            :order => "sale_date DESC").each do |s|
+    count += 1
+    puts "SaleArchive #{s.id}, (#{count})"
+    SaleArchive.create(s.attributes)
+    s.destroy
+  end
+
+  count = 0
+  Return.find(:all,
+              :conditions => ["return_date <= ?", "2010-12-31"],
+              :order => "return_date DESC").each do |r|
+    count += 1
+    puts "ReturnArchive #{r.id}, (#{count})"
+    ReturnArchive.create(r.attributes)
+    r.destroy
+  end
+end
+
+
+namespace :warehouse do
+  task :create => :environment do
+    #user_id = User.all.map(&:id).rand
+    
+    models = Model.hash_all(:id)
+    makers = Maker.hash_all(:id)
+    
+    User.all.each do |u|
+      user_id = u.id
+    
+    @tmp = Tmp.find_by_sql(["SELECT orders.model_id, sum(orders.items_received) as items_available, min(orders.id) as id, min(orders.maker_id) as maker_id FROM orders WHERE orders.user_id = ? AND (order_date BETWEEN ? AND ?) GROUP BY orders.model_id", user_id, "#{Time.now.year-1}-01-01", "#{Time.now.year-1}-12-31"])
+    
+    stocks = Tmp.find_by_sql(["SELECT stocks.model_id, sum(stocks.items) AS items_available, min(stocks.id) AS id, min(stocks.maker_id) AS maker_id FROM stocks WHERE stocks.user_id = ? AND (created_at BETWEEN ? AND ?) GROUP BY stocks.model_id", user_id, "#{Time.now.year-1}-01-01", "#{Time.now.year-1}-12-31"])
+    
+    w_ids = @tmp.map(&:id)
+    stocks.each do |s|
+        w = @tmp.detect {|el| el.model_id == s.model_id}
+        if w
+          w.items_available = w.items_available.to_i + s.items_available.to_i
+        else
+          while w_ids.include?(s.id)
+            s.id = rand(10000)
+          end
+          @tmp << s
+        end
+    end
+    
+    sales = Sale.find_by_sql(["SELECT sales.model_id, sum(sales.items_sold) as sold FROM sales WHERE sales.user_id = ? AND (sale_date BETWEEN ? AND ?) GROUP BY sales.model_id", user_id, "#{Time.now.year-1}-01-01", "#{Time.now.year-1}-12-31"])
+
+    returns = Return.find_by_sql(["SELECT returns.model_id, sum(returns.items_returned) as returned FROM returns WHERE returns.user_id = ? AND (return_date BETWEEN ? AND ?) GROUP BY returns.model_id", user_id, "#{Time.now.year-1}-01-01", "#{Time.now.year-1}-12-31"])
+
+    sales.each do |s|
+      w = @tmp.detect {|el| el.model_id == s.model_id}
+      w.items_available = w.items_available.to_i - s.sold.to_i if w
+    end
+    
+    returns.each do |s|
+      w = @tmp.detect {|el| el.model_id == s.model_id}
+      w.items_available = w.items_available.to_i - s.returned.to_i if w
+    end
+    
+    #@tmp = @tmp.sort_by { |el| el.model.name }
+    
+    @tmp.delete_if {|e| e.items_available.to_i == 0}
+    
+    puts "** User #{u.email} **"
+    @tmp.each do |item|
+      begin
+        puts "#{models[item.model_id].name} (#{makers[item.maker_id].name}) Qt #{item.items_available}"
+      rescue
+        puts "#{item.model_id} (#{item.maker_id}) Qt #{item.items_available}"
+      end
+      
+      # Warehouse Insert
+      Warehouse.add(user_id, item.maker_id, item.model_id, item.items_available)
+      
+    end
+    
+  end
+
+  end
+end
+
+
+#require 'config/environment.rb'
 task :magazzino => :environment do
 
 models = Model.all(:select => 'id, name, maker_id')

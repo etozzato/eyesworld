@@ -8,6 +8,8 @@ package capelloherokucom.models {
   public class Return extends RxModel {
     public static const LABEL:String = "itemsReturned";
 
+    public var total:Number = new Number;
+
     public var itemsReturned:int = 0;
 
     public var returnDate:Date = new Date;

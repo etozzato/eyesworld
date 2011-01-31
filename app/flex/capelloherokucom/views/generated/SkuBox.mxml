@@ -18,6 +18,7 @@
     import mx.events.CloseEvent;
     import capelloherokucom.utils.Utils;
     import org.restfulx.collections.ModelsCollection;
+    import mx.events.DataGridEvent;
     
     [Bindable]
     private var panelHeight:int = Utils.panelHeight;
@@ -41,7 +42,7 @@
   }
 
   private function saveOrder():void {
-    new_order_form.visible = false;
+/*    new_order_form.visible = false;*/
     update_btn.enabled = false;
     selectedOrderPanel.title = "Ordine Selezionato: -";
     if (order.id) {
@@ -56,20 +57,25 @@
     // unset form
     itemsIncrement.value = 0;
     last_increment.selectedDate = null;
-    Rx.models.reset(Warehouse); 
-  }
+/*    Rx.models.reset(Warehouse); */
+}
 
   private function onOrderSelect():void {
-    order = RxUtils.clone(ordersGrid.selectedItem) as Order;
+    order = RxUtils.clone(skuGrid.selectedItem) as Order;
+    update_btn.enabled = true;
+    selectedOrderPanel.title = "Ordine Selezionato: " + order.id.toString() + "/" + order.model;
+    loadIncrements(order);
+    /*    skuGrid.dataProvider = Rx.models.index(Order)
+          skuGrid.selectedItem = order;*/
+  }
+
+  private function loadIncrements(order:Order):void{
     Rx.models.reset(Increment);
     orderIncrements = Rx.models.index(Increment, {nestedBy:[order]});
-    update_btn.enabled = true;
-    new_order_form.visible = true;
-    selectedOrderPanel.title = "Ordine Selezionato: " + order.id.toString() + "/" + order.model;
   }
 
   private function onOrderUpdate(result:Order):void {
-    ordersGrid.selectedIndex = -1;
+    skuGrid.selectedItem = result;
   }
 
   private function formatDate(item:Object, column:DataGridColumn):String{
@@ -97,14 +103,14 @@
   
 
   <mx:Panel id="skusPanel" title="Gestione Ricevuto" width="70%" height="{panelHeight}" styleName="appPanel">
-    <mx:DataGrid dataProvider="{Rx.models.index(Order)}" id="ordersGrid" width="100%" height="100%" change="onOrderSelect()" fontSize="12" updateComplete="getCurrentUser()" >
+    <mx:DataGrid dataProvider="{Rx.models.index(Order)}" id="skuGrid" width="100%" height="100%" change="onOrderSelect()" fontSize="12" updateComplete="getCurrentUser()" >
       <mx:columns>
         <mx:DataGridColumn headerText="Fornitore" dataField="maker"  width="150" />
         <mx:DataGridColumn headerText="Marchio" dataField="model"  width="200" />
         <mx:DataGridColumn headerText="Prezzo Conf." dataField="confidentialPrice" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
         <mx:DataGridColumn headerText="Ordinato" dataField="itemsRequired" textAlign="center" width="130" />
         <mx:DataGridColumn headerText="Ricevuto" dataField="itemsReceived" textAlign="center" width="130" />
-        <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" width="100" textAlign="center" />
+        <mx:DataGridColumn headerText="Data Ordine" dataField="orderDate" labelFunction="formatDate" width="100" textAlign="center" sortDescending="true" />
       </mx:columns>
     </mx:DataGrid>
     <mx:ControlBar width="100%">
@@ -113,7 +119,7 @@
   </mx:Form>
   </mx:Panel>
   <mx:Panel id="selectedOrderPanel" title="Ordine Selezionato: -" width="30%" height="{panelHeight}" styleName="appPanel">
-    <mx:Form width="100%" height="100%" id="new_order_form" visible="false">
+    <mx:Form width="100%" height="100%" id="new_order_form" visible="true">
       <mx:FormItem label="Fornitore:" width="100%" fontStyle="normal">
         <mx:Text id="maker" text="{order.maker}" fontFamily="Courier New" fontSize="14" height="20" width="100%" textAlign="left"/>
       </mx:FormItem>
