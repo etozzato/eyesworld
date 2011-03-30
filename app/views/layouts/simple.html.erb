@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=ASCII-8BIT" />
+  <title>SmartSearch by TrueInteractive</title>
+  <%= stylesheet_link_tag "main.css" %>
+  <%= javascript_include_tag :defaults %>
+</head>
+<body>
+  <div id="container">
+    
+    <div id="right">
+      <%= yield(:sidebar) %>
+    </div>
+    <div class="clear"></div>
+    
+    <div id="content-box">
+      <%= yield %>
+      <div class="clear"></div>
+    </div>
+  </div>
+</body>

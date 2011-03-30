@@ -1,0 +1,119 @@
+<%= javascript_include_tag 'prototype', 'jsProgressBarHandler' %>
+
+<style>
+  table{width:100%;border-top:1px solid #333;}
+  td{border-bottom:1px solid #333;border-left:1px solid #333;}
+  td.no_b{border-left:0px}
+  th{border-bottom:1px solid #333;border-left:1px solid #333;}
+  th.no_b{border-left:0px}
+  container{border:0px;}
+</style>
+<br>
+<h2 style='margin-left:30px'>Statistiche Operazioni</h2>
+<br>
+
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <th class='no_b'>&nbsp;</th>
+    <th>Numero Pezzi</th>
+    <th>Valore</th>
+    <th>Rapporto %</th>
+  </tr>
+  <tr>
+    <td class='no_b'>Budget annuale</td>
+    <td>-</td>
+    <td><%= current_user.budget ? euro(current_user.budget.value) : 0 %></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class='no_b'>Budget residuo</td>
+    <td>-</td>
+    <td><%= euro((current_user.budget ? current_user.budget.value : 0) + current_user.current_budget) %></td>
+    <td><span class="progressBar" id="element2"><%= p2 = (100 - (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) %></span> <%= p2 %>%</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale ordinato</td>
+    <td><%= sum_req = @total[:order].attributes['SUM(items_required)'].to_i %></td>
+    <td><%= euro(tot = @total[:order].attributes['SUM(total)']) %></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale ricevuto</td>
+    <td><%= sum_rec = @total[:order].attributes['SUM(items_received)'].to_i %></td>
+    <td><%= euro(@total[:order].attributes['SUM(items_received*price)']) %></td>
+    <td><span class="progressBar" id="element3"><%= p3 = sum_req > 0 ? (sum_rec/sum_req.to_f*100).round(2) : 0 %></span> <%= p3 %>%</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale venduto</td>
+    <td><%= sum_sol = @total[:sale].attributes['SUM(items_sold)'].to_i %></td>
+    <td>-</td>
+    <td><span class="progressBar" id="element4"><%= p4 = sum_rec > 0 ? (sum_sol/sum_rec.to_f*100).round(2) : 0 %></span> <%= p4 %>%</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Resi</td>
+    <td><%= sum_ret = @total[:return].attributes['SUM(items_returned)'].to_i %></td>
+    <td><%= euro(@total[:return].attributes['SUM(total)']) %></td>
+    <td><span class="progressBar" id="element5"><%= p5 = sum_rec > 0 ? (sum_ret/sum_rec.to_f*100).round(2) : 0 %></span> <%= p5 %>%</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Magazzino</td>
+    <td><%= @total[:order].attributes['SUM(items_received)'].to_i - (@total[:sale].attributes['SUM(items_sold)'].to_i + @total[:return].attributes['SUM(items_returned)'].to_i) %></td>
+    <td>-</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<br/>
+<br/>
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td class='no_b'>Odini per FORNITORE</td>
+    <td>
+      <%= select_tag(:isux, options_for_select(@order_per_maker)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Odini per MARCHIO</td>
+    <td>
+      <%= select_tag(:asoi, options_for_select(@order_per_model)) %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class='no_b'>Prezzo medio per FORNITORE</td>
+    <td>
+      <%= select_tag(:aosim, options_for_select(@avg_usd_per_maker)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Prezzo medio per MARCHIO</td>
+    <td>
+      <%= select_tag(:aosim, options_for_select(@avg_usd_per_model)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Prezzo medio</td>
+    <td>
+      <%= euro(sum_req > 0 ? (tot.to_f / sum_req).round(2) : 0) %>
+    </td>
+  </tr>
+</table>
+<br>
+<% content_for(:sidebar) do %>
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td>Ultimo Ordine: <b><%= @last[:order] ? sh_date(@last[:order].order_date)  : '-' %></b></td>
+  </tr>
+  <tr>
+    <td>Ultimo Ricevuto: <b><%= @last[:increment] ? sh_date(@last[:increment].created_at) : '-' %></b></td>
+  </tr>
+  <tr>
+    <td>Ultimo Venduto: <b><%= @last[:sale] ?  sh_date(@last[:sale].sale_date) : '-' %></b></td>
+  </tr>
+</table>
+<br/><br/>
+  <p>
+  <h3 style='text-align:center'><%= link_to 'Entra nell\'Applicazione', app_path %></h3>
+  </p>
+  <div style='position:relative;top:30px;left:50px'><script language='javascript' src='http://app.headcounters.com/digits.js'></script></div> 
+  
+<% end %>

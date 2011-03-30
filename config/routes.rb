@@ -18,6 +18,7 @@ ActionController::Routing::Routes.draw do |map|
                   }
   
   map.resources :session
+  map.resources :stats
   
   map.homepage '/', :controller => 'homepage'
   map.login   '/login/:key', :controller => 'session', :action => 'login'

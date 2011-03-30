@@ -50,6 +50,7 @@
     <div id="key" style='font-size:8pt;padding-top:10px;margin:0px auto; width:500px; text-align:center'>
       <% if logged_in? %>
         <%= link_to 'Entra', app_path %>
+        <%= link_to 'Statistiche', stats_path %>
         <%= link_to 'Admin', admin_path if current_user.admin? %>
         <%= link_to 'Reports', reports_path if current_user.admin? %>
         <%= link_to 'Esci', logout_path %>
