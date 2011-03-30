@@ -41,7 +41,7 @@ class FlexNestedAttributeMiddleware
   end
 end
 
-ActionController::Dispatcher.middleware.insert_after 'ActionController::ParamsParser', FlexNestedAttributeMiddleware
+#ActionController::Dispatcher.middleware.insert_after 'ActionController::ParamsParser', FlexNestedAttributeMiddleware
 
 # If you have configured your Rails/Flex/AIR application to share authenticity_token
 # comment this out to enable forgery protection. By default, this is disabled to allow
