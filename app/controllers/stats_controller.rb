@@ -1,6 +1,6 @@
 class StatsController < ApplicationController
   layout 'simple'
-  before_filter :login_required
+  #before_filter :login_required
   
   def index
     @last = {}
