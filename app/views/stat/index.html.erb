@@ -29,7 +29,7 @@
     <td class='no_b'>Budget residuo</td>
     <td>-</td>
     <td><%= euro((current_user.budget ? current_user.budget.value : 0) + current_user.current_budget) %></td>
-    <td><span class="progressBar" id="element2"><%= p2 = current_user.budget > 0 ? (100 - (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) : 0 %></span> <%= p2 %>%</td>
+    <td><span class="progressBar" id="element2"><%= p2 = current_user.budget.value > 0 ? (100 - (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) : 0 %></span> <%= p2 %>%</td>
   </tr>
   <tr>
     <td class='no_b'>Totale ordinato</td>
