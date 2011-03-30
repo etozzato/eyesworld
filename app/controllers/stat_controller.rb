@@ -1,4 +1,4 @@
-class StatsController < ApplicationController
+class StatController < ApplicationController
   layout 'simple'
   #before_filter :login_required
   
