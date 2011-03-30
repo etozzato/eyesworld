@@ -10,7 +10,7 @@ module ApplicationHelper
   end
   
   def euro(val)
-    number_to_currency(val, unit: '&euro; ')
+    number_to_currency(val, :unit => '&euro; ')
   end
   
 end
