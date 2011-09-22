@@ -27,3 +27,8 @@
   borderColor: #c0c0c0;
 }
 
+.statBtn {
+  position:absolute;
+  top: 30px;
+  left: 300px;
+}

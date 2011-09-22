@@ -18,7 +18,10 @@ ActionController::Routing::Routes.draw do |map|
                   }
   
   map.resources :session
-  map.resources :stat
+  map.resources :stat,
+                  :collection => {
+                    :list => :get
+                  }
   
   map.homepage '/', :controller => 'homepage'
   map.login   '/login/:key', :controller => 'session', :action => 'login'

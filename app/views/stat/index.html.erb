@@ -4,12 +4,15 @@
   table{width:100%;border-top:1px solid #333;}
   td{border-bottom:1px solid #333;border-left:1px solid #333;}
   td.no_b{border-left:0px}
+  td.digit{text-align:center}
+  td.right{text-align:right}
+
   th{border-bottom:1px solid #333;border-left:1px solid #333;}
   th.no_b{border-left:0px}
   container{border:0px;}
 </style>
 <br>
-<h2 style='margin-left:30px'>Statistiche Operazioni</h2>
+<h2 style='margin-left:30px'>Statistiche Operazioni <%= Time.now.year %></h2>
 <br>
 
 <table border="0" cellspacing="0" cellpadding="5">
@@ -17,48 +20,56 @@
     <th class='no_b'>&nbsp;</th>
     <th>Numero Pezzi</th>
     <th>Valore</th>
-    <th>Rapporto %</th>
+    <th>Grafico %</th>
   </tr>
   <tr>
     <td class='no_b'>Budget annuale</td>
-    <td>-</td>
-    <td><%= current_user.budget ? euro(current_user.budget.value) : 0 %></td>
+    <td class='digit'>-</td>
+    <td class='digit'><%= current_user.budget ? euro(current_user.budget.value) : 0 %></td>
     <td></td>
   </tr>
   <tr>
     <td class='no_b'>Budget residuo</td>
-    <td>-</td>
-    <td><%= euro((current_user.budget ? current_user.budget.value : 0) + current_user.current_budget) %></td>
-    <td><span class="progressBar" id="element2"><%= p2 = current_user.budget.value > 0 ? (100 - (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) : 0 %></span> <%= p2 %>%</td>
+    <td class='digit'>-</td>
+    <td class='digit'><%= euro((current_user.budget ? current_user.budget.value : 0) + current_user.current_budget) %></td>
+    <td class=''><span class="progressBar" id="element2"><%= p2 = current_user.budget.value > 0 ? ( (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) : 0 %></span>
+      Hai già ordinato <%= format_percent p2 %> di quello che puoi ordinare in un anno
+      </td>
   </tr>
   <tr>
     <td class='no_b'>Totale ordinato</td>
-    <td><%= sum_req = @total[:order].attributes['SUM(items_required)'].to_i %></td>
-    <td><%= euro(tot = @total[:order].attributes['SUM(total)']) %></td>
+    <td class='digit'><%= sum_req = @total[:order].attributes['SUM(items_required)'].to_i %></td>
+    <td class='digit'><%= euro(tot = @total[:order].attributes['SUM(total)']) %></td>
     <td>&nbsp;</td>
   </tr>
   <tr>
     <td class='no_b'>Totale ricevuto</td>
-    <td><%= sum_rec = @total[:order].attributes['SUM(items_received)'].to_i %></td>
-    <td><%= euro(@total[:order].attributes['SUM(items_received*price)']) %></td>
-    <td><span class="progressBar" id="element3"><%= p3 = sum_req > 0 ? (sum_rec/sum_req.to_f*100).round(2) : 0 %></span> <%= p3 %>%</td>
+    <td class='digit'><%= sum_rec = @total[:order].attributes['SUM(items_received)'].to_i %></td>
+    <td class='digit'><%= euro(@total[:order].attributes['SUM(items_received*price)']) %></td>
+    <td class=''><span class="progressBar" id="element3"><%= p3 = sum_req > 0 ? (sum_rec/sum_req.to_f*100).round(2) : 0 %></span>
+      Hai ricevuto <%= format_percent p3 %> di quello che hai ordinato
+    </td>
   </tr>
   <tr>
     <td class='no_b'>Totale venduto</td>
-    <td><%= sum_sol = @total[:sale].attributes['SUM(items_sold)'].to_i %></td>
-    <td>-</td>
-    <td><span class="progressBar" id="element4"><%= p4 = sum_rec > 0 ? (sum_sol/sum_rec.to_f*100).round(2) : 0 %></span> <%= p4 %>%</td>
+    <td class='digit'><%= sum_sol = @total[:sale].attributes['SUM(items_sold)'].to_i %></td>
+    <td class='digit'>-</td>
+    <td class=''><span class="progressBar" id="element4"><%= p4 = sum_rec > 0 ? (sum_sol/sum_rec.to_f*100).round(2) : 0 %></span>
+    Hai venduto <%= format_percent p4 %> di occhiali che hai ordinato e ricevuto
+    </td>
   </tr>
   <tr>
     <td class='no_b'>Resi</td>
-    <td><%= sum_ret = @total[:return].attributes['SUM(items_returned)'].to_i %></td>
-    <td><%= euro(@total[:return].attributes['SUM(total)']) %></td>
-    <td><span class="progressBar" id="element5"><%= p5 = sum_rec > 0 ? (sum_ret/sum_rec.to_f*100).round(2) : 0 %></span> <%= p5 %>%</td>
+    <td class='digit'><%= sum_ret = @total[:return].attributes['SUM(items_returned)'].to_i %></td>
+    <td class='digit'><%= euro(@total[:return].attributes['SUM(total)']) %></td>
+    <td class=''><span class="progressBar" id="element5"><%= p5 = sum_rec > 0 ? (sum_ret/sum_rec.to_f*100).round(2) : 0 %></span>
+    Hai reso <%= format_percent p5 %> degli occhiali che hai ordinato
+    </td>
   </tr>
   <tr>
     <td class='no_b'>Magazzino</td>
-    <td><%= @total[:order].attributes['SUM(items_received)'].to_i - (@total[:sale].attributes['SUM(items_sold)'].to_i + @total[:return].attributes['SUM(items_returned)'].to_i) %></td>
-    <td>-</td>
+    <td class='digit'><%= @total[:order].attributes['SUM(items_received)'].to_i - (@total[:sale].attributes['SUM(items_sold)'].to_i + @total[:return].attributes['SUM(items_returned)'].to_i) %></td>
+    <td class='digit'>-</td>
     <td>&nbsp;</td>
   </tr>
 </table>
@@ -92,7 +103,7 @@
   </tr>
   <tr>
     <td class='no_b'>Prezzo medio</td>
-    <td>
+    <td class='digit'>
       <%= euro(sum_req > 0 ? (tot.to_f / sum_req).round(2) : 0) %>
     </td>
   </tr>
@@ -110,10 +121,7 @@
     <td>Ultimo Venduto: <b><%= @last[:sale] ?  sh_date(@last[:sale].sale_date) : '-' %></b></td>
   </tr>
 </table>
-<br/><br/>
-  <p>
+<p>
   <h3 style='text-align:center'><%= link_to 'Entra nell\'Applicazione', app_path %></h3>
-  </p>
-  <div style='position:relative;top:30px;left:50px'><script language='javascript' src='http://app.headcounters.com/digits.js'></script></div> 
-  
+</p>  
 <% end %>

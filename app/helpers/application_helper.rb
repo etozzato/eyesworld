@@ -13,4 +13,19 @@ module ApplicationHelper
     number_to_currency(val, :unit => '&euro; ')
   end
   
+  def format_percent(val)
+    case val.to_f
+    when (0...1)
+      "lo #{val}%"
+    when (1...2)
+      "l' #{val}%"
+    when (2...80)
+      "il #{val}%"
+    when (80...90)
+      "l' #{val}%"
+    else
+      "il #{val}%"
+    end
+  end
+
 end

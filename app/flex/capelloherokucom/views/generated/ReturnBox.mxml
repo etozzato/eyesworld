@@ -74,6 +74,14 @@
       //update_btn.enabled = false;
     }
     
+    private function formatCurrency(item:Object, column:DataGridColumn):String{
+     return currency(item[column.dataField]);
+    }
+
+    private function currency(val:Number):String{
+      return Utils.getCostFormatter().format(val)
+    }
+    
     private function formatDate(item:Object, column:DataGridColumn):String{
       var df:DateFormatter = new DateFormatter();
       df.formatString = "DD/MM/YYYY";
@@ -90,6 +98,7 @@
       <mx:DataGridColumn headerText="Marchio" dataField="model" width="200" />
       <mx:DataGridColumn headerText="Resi" width="130" dataField="itemsReturned" textAlign="center" />
       <mx:DataGridColumn headerText="Data Reso" dataField="returnDate" labelFunction="formatDate" textAlign="center" />
+      <mx:DataGridColumn headerText="Importo" width="130" dataField="total" labelFunction="formatCurrency" textAlign="right" paddingRight="15" />
     </mx:columns>
   </mx:DataGrid>
   

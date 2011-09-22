@@ -20,6 +20,7 @@ class SessionController < ApplicationController
     end
     flash[msg.at(0)] = msg.at(1)
     current_user.verify_budget if logged_in?
+    Budget.sync(current_user) if logged_in?
     redirect_to homepage_url
   end
   

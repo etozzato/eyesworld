@@ -7,9 +7,13 @@ class User < ActiveRecord::Base
   has_many :returns, :dependent => :destroy, :order => 'return_date ASC'
 
   has_many :warehouses
-  
+
   belongs_to :budget
+
+  def sync_budget
   
+  end
+
   def verify_budget
     if self.budget.nil? || self.budget.year != Time.now.year
       budget = Budget.create(:user_id => self.id, :year => Time.now.year, :value => 0)
