@@ -1,0 +1,6 @@
+<select name="user" id="user" onChange="MM_jumpMenu('parent',this,1)"> 
+  <option selected="selected" value="#">Seleziona un Utente</option> 
+  <% @users.each do |u| %>
+    <option value="<%= u.id %>"><%= u.username || u.email %></option>
+  <% end %>
+</select> 

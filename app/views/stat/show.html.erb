@@ -1,0 +1,134 @@
+<%= javascript_include_tag 'prototype', 'jsProgressBarHandler' %>
+
+<style>
+  table{width:100%;border-top:1px solid #333;}
+  td{border-bottom:1px solid #333;border-left:1px solid #333;}
+  td.no_b{border-left:0px}
+  td.digit{text-align:center}
+  td.right{text-align:right}
+  
+  th{border-bottom:1px solid #333;border-left:1px solid #333;}
+  th.no_b{border-left:0px}
+  container{border:0px;}
+</style>
+<select name="user" id="user" onChange="MM_jumpMenu('parent',this,1)"> 
+  <option selected="selected" value="#">Seleziona un Utente</option> 
+  <% @users.each do |u| %>
+    <option value="<%= u.id %>"><%= (u.username || u.email).force_encoding('UTF-8') %></option>
+  <% end %>
+</select> 
+
+<br>
+<h2 style='margin-left:30px'>Statistiche Operazioni <%= Time.now.year %> <%= (@user.username || @user.email).force_encoding('UTF-8')  %></h2>
+<br>
+
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <th class='no_b'>&nbsp;</th>
+    <th>Numero Pezzi</th>
+    <th>Valore</th>
+    <th>Grafico %</th>
+  </tr>
+  <tr>
+    <td class='no_b'>Budget annuale</td>
+    <td class='digit'>-</td>
+    <td class='digit'><%= @user.budget ? euro(@user.budget.value) : 0 %></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class='no_b'>Budget residuo</td>
+    <td class='digit'>-</td>
+    <td class='digit'><%= euro((@user.budget ? @user.budget.value : 0) + @user.current_budget) %></td>
+    <td class=''><span class="progressBar" id="element2"><%= p2 = @user.budget.value > 0 ? ( (@user.current_budget / (-1*@user.budget.value.to_f)*100).round(2)) : 0 %></span>
+      Hai già ordinato <%= format_percent p2 %> di quello che puoi ordinare in un anno
+      </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale ordinato</td>
+    <td class='digit'><%= sum_req = @total[:order].attributes['SUM(items_required)'].to_i %></td>
+    <td class='digit'><%= euro(tot = @total[:order].attributes['SUM(total)']) %></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale ricevuto</td>
+    <td class='digit'><%= sum_rec = @total[:order].attributes['SUM(items_received)'].to_i %></td>
+    <td class='digit'><%= euro(@total[:order].attributes['SUM(items_received*price)']) %></td>
+    <td class=''><span class="progressBar" id="element3"><%= p3 = sum_req > 0 ? (sum_rec/sum_req.to_f*100).round(2) : 0 %></span>
+      Hai ricevuto <%= format_percent p3 %> di quello che hai ordinato
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Totale venduto</td>
+    <td class='digit'><%= sum_sol = @total[:sale].attributes['SUM(items_sold)'].to_i %></td>
+    <td class='digit'>-</td>
+    <td class=''><span class="progressBar" id="element4"><%= p4 = sum_rec > 0 ? (sum_sol/sum_rec.to_f*100).round(2) : 0 %></span>
+    Hai venduto <%= format_percent p4 %> di occhiali che hai ordinato e ricevuto
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Resi</td>
+    <td class='digit'><%= sum_ret = @total[:return].attributes['SUM(items_returned)'].to_i %></td>
+    <td class='digit'><%= euro(@total[:return].attributes['SUM(total)']) %></td>
+    <td class=''><span class="progressBar" id="element5"><%= p5 = sum_rec > 0 ? (sum_ret/sum_rec.to_f*100).round(2) : 0 %></span>
+    Hai reso <%= format_percent p5 %> degli occhiali che hai ordinato
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Magazzino</td>
+    <td class='digit'><%= @total[:order].attributes['SUM(items_received)'].to_i - (@total[:sale].attributes['SUM(items_sold)'].to_i + @total[:return].attributes['SUM(items_returned)'].to_i) %></td>
+    <td class='digit'>-</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<br/>
+<br/>
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td class='no_b'>Odini per FORNITORE</td>
+    <td>
+      <%= select_tag(:isux, options_for_select(@order_per_maker)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Odini per MARCHIO</td>
+    <td>
+      <%= select_tag(:asoi, options_for_select(@order_per_model)) %>
+    </td>
+  </tr>
+
+  <tr>
+    <td class='no_b'>Prezzo medio per FORNITORE</td>
+    <td>
+      <%= select_tag(:aosim, options_for_select(@avg_usd_per_maker)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Prezzo medio per MARCHIO</td>
+    <td>
+      <%= select_tag(:aosim, options_for_select(@avg_usd_per_model)) %>
+    </td>
+  </tr>
+  <tr>
+    <td class='no_b'>Prezzo medio</td>
+    <td class='digit'>
+      <%= euro(sum_req > 0 ? (tot.to_f / sum_req).round(2) : 0) %>
+    </td>
+  </tr>
+</table>
+<br>
+<% content_for(:sidebar) do %>
+<table border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td>Ultimo Ordine: <b><%= @last[:order] ? sh_date(@last[:order].order_date)  : '-' %></b></td>
+  </tr>
+  <tr>
+    <td>Ultimo Ricevuto: <b><%= @last[:increment] ? sh_date(@last[:increment].created_at) : '-' %></b></td>
+  </tr>
+  <tr>
+    <td>Ultimo Venduto: <b><%= @last[:sale] ?  sh_date(@last[:sale].sale_date) : '-' %></b></td>
+  </tr>
+</table>
+<p>
+  <h3 style='text-align:center'><%= link_to 'Entra nell\'Applicazione', app_path %></h3>
+</p>  
+<% end %>
