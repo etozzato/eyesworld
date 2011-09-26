@@ -43,12 +43,12 @@
 			animate		: true,										// Animate the progress? - default: true
 			showText	: false,										// show text with percentage in next to the progressbar? - default : true
 			width		: 120,										// Width of the progressbar - don't forget to adjust your image too!!!
-			boxImage	: 'images/percentImage.png',			// boxImage : image around the progress bar
+			boxImage	: '/images/percentImage.png',			// boxImage : image around the progress bar
 			barImage	: Array(
-				'images/percentImage_back4.png',
-				'images/percentImage_back3.png',
-				'images/percentImage_back2.png',
-				'images/percentImage_back1.png'
+				'/images/percentImage_back4.png',
+				'/images/percentImage_back3.png',
+				'/images/percentImage_back2.png',
+				'/images/percentImage_back1.png'
 			),
 			height		: 12,										// Height of the progressbar - don't forget to adjust your image too!!!
 			onTick		: function(pbObj) { return true }
