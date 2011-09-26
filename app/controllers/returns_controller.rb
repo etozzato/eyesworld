@@ -46,6 +46,7 @@ class ReturnsController < ApplicationController
   # POST /sales.fxml
   def create
     @return = Return.new(params[:return].merge({:user_id => current_user.id}))
+    # @return = Return.new(params[:return].merge({:user_id => current_user.id, :year => $current_year}))
 
     ## Adjust Warehouse (-)
     Warehouse.rem(current_user.id, @return.maker_id, @return.model_id, @return.items_returned)

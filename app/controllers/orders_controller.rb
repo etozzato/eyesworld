@@ -61,6 +61,7 @@ class OrdersController < ApplicationController
     last_increment = params[:order].delete(:last_increment)
     i_d = params[:order].delete(:i_d)
     @order = Order.new(params[:order].merge({:user_id => current_user.id}))
+    # @order = Order.new(params[:order].merge({:user_id => current_user.id, :year => $current_year}))
 
     ## Adjust Budget (-)
     Budget.rem(current_user, @order.total)
@@ -93,6 +94,7 @@ class OrdersController < ApplicationController
     to_total = @order.total
 
     @order.increments.create(:from => from, :to => to, :received_at => last_increment) if from && to && from != to
+    # @order.increments.create(:from => from, :to => to, :received_at => last_increment, :year => $current_year) if from && to && from != to
 
     if from != to
       ## Adjust Warehouse (?)

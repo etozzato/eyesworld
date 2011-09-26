@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
 
   def self.for_user(user_id)
     all(:conditions => ["user_id = ? AND (order_date BETWEEN ? AND ? AND items_required > items_received OR order_date BETWEEN ? AND ?)", user_id, "#{(Time.now.year)-1}-01-01", "#{(Time.now.year)-1}-12-31", "#{Time.now.year}-01-01", "#{Time.now.year}-12-31"],
-        :order => "order_date DESC")
+        :order => "id DESC")
   end
   
 end

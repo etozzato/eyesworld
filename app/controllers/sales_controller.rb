@@ -46,6 +46,7 @@ class SalesController < ApplicationController
   # POST /sales.fxml
   def create
     @sale = Sale.new(params[:sale].merge({:user_id => current_user.id}))
+    # @sale = Sale.new(params[:sale].merge({:user_id => current_user.id, :year => $current_year}))
 
     ## Adjust Warehouse (-)
     Warehouse.rem(current_user.id, @sale.maker_id, @sale.model_id, @sale.items_sold)
