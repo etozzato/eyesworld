@@ -35,14 +35,14 @@
   <tr>
     <td class='no_b'>Budget annuale</td>
     <td class='digit'>-</td>
-    <td class='digit'><%= current_user.budget ? euro(current_user.budget.value) : 0 %></td>
+    <td class='digit'><%= @user.budget ? euro(@user.budget.value) : 0 %></td>
     <td></td>
   </tr>
   <tr>
     <td class='no_b'>Budget residuo</td>
     <td class='digit'>-</td>
-    <td class='digit'><%= euro((current_user.budget ? current_user.budget.value : 0) + current_user.current_budget) %></td>
-    <td class=''><span class="progressBar" id="element2"><%= p2 = current_user.budget.value > 0 ? ( (current_user.current_budget / (-1*current_user.budget.value.to_f)*100).round(2)) : 0 %></span>
+    <td class='digit'><%= euro((@user.budget ? @user.budget.value : 0) + @user.current_budget) %></td>
+    <td class=''><span class="progressBar" id="element2"><%= p2 = @user.budget.value > 0 ? ( (@user.current_budget / (-1*@user.budget.value.to_f)*100).round(2)) : 0 %></span>
       Hai già ordinato <%= format_percent p2 %> di quanto puoi ordinare in un anno
       </td>
   </tr>
