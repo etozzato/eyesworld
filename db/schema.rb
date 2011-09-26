@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110926040746) do
+ActiveRecord::Schema.define(:version => 20110131010202) do
 
   create_table "budgets", :force => true do |t|
     t.integer  "year"

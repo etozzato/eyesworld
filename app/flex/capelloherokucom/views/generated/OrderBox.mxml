@@ -178,13 +178,13 @@
       <mx:FormItem width="450" height="20" label="Totale Ordini:">
         <mx:Text id="user_order" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.currentBudget*-1)}" width="100" textAlign="right" />
       </mx:FormItem>
-  	  <mx:FormItem width="450" height="20" label="Totale Resi:">
-		<mx:Text id="user_return" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.returned)}" width="100" textAlign="right" />
-	  </mx:FormItem>
-  	  <mx:FormItem width="450" height="20" label="Totale Soldi Spesi:">
-		<mx:Text id="user_spent" fontFamily="Courier New" fontSize="14" height="20" text="{currency((current_user.currentBudget*-1)-current_user.returned)}" width="100" textAlign="right" />
-	  </mx:FormItem>
-  	 <mx:FormItem width="450" height="20" label="Budget:">
+      <mx:FormItem width="450" height="20" label="Totale Resi:">
+    <mx:Text id="user_return" fontFamily="Courier New" fontSize="14" height="20" text="{currency(current_user.returned)}" width="100" textAlign="right" />
+    </mx:FormItem>
+      <mx:FormItem width="450" height="20" label="Totale valore acquistato:">
+    <mx:Text id="user_spent" fontFamily="Courier New" fontSize="14" height="20" text="{currency((current_user.currentBudget*-1)-current_user.returned)}" width="100" textAlign="right" />
+    </mx:FormItem>
+     <mx:FormItem width="450" height="20" label="Budget:">
         <mx:Text id="user_budget" text="{currency(current_user.budget.value)}" fontFamily="Courier New" fontSize="14" height="20" width="100" textAlign="right"/>
       </mx:FormItem>
   </mx:Form>
