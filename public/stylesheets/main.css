@@ -20,8 +20,8 @@ a:hover {color:#999;}
 
 #footer {padding-top:0px;background-color:#fff; width:350px; margin:0px auto; font-size:9pt;}
 
-.positive {color:#8b98ab;}
-.negative {color:#8A1A28;}
+.positive {color:rgb(0,128,64);}
+.negative {color:rgb(98,21,18);}
 
 #search-div {position:absolute; padding:20px; top:20px; left:20px; width:665px; background-color:#333;}
 .q {color:#8A1A28;}

@@ -42,7 +42,7 @@
     <td class='no_b'>Budget residuo</td>
     <td class='digit'>-</td>
     <td class='digit'><%= euro((@user.budget ? @user.budget.value : 0) + @user.current_budget) %></td>
-    <td class=''><span class="progressBar" id="element2"><%= p2 = @user.budget.value > 0 ? ( (@user.current_budget / (-1*@user.budget.value.to_f)*100).round(2)) : 0 %></span>
+    <td class=''><span class="progressBar" id="element2"><%= 100 - (p2 = @user.budget.value > 0 ? ( (@user.current_budget / (-1*@user.budget.value.to_f)*100).round(2)) : 0) %></span>
       Hai già ordinato <%= format_percent p2 %> di quanto puoi ordinare in un anno
       </td>
   </tr>
@@ -65,7 +65,7 @@
     <td class='digit'><%= sum_sol = @total[:sale].attributes['SUM(items_sold)'].to_i %></td>
     <td class='digit'></td>
     <td class=''><span class="progressBar" id="element4"><%= p4 = sum_rec > 0 ? (sum_sol/sum_rec.to_f*100).round(2) : 0 %></span>
-    Il numero di occhiali che ha venduto finora (tra nuovi e di magazzino) è pari al <%= format_percent p4 %> di quanti ne hai ordinati
+    Il numero di occhiali che hai venduto finora (tra nuovi e di magazzino) è pari al <%= format_percent p4 %> di quanti ne hai ordinati
     </td>
   </tr>
   <tr>
@@ -82,7 +82,7 @@
     <td class='digit'><%= @total[:order].attributes['SUM(items_received)'].to_i - (@total[:sale].attributes['SUM(items_sold)'].to_i + @total[:return].attributes['SUM(items_returned)'].to_i) %></td>
     <td class='digit'></td>
     <td>
-      Hai modificato il magazzino di <% x = (sum_sol - sum_rec) %> <%= (x > 0) ? '<span class="positive">' : '<span class="negative">' %> <%= x %> </span> pezzi
+      Hai modificato il magazzino di <% x = (sum_sol - sum_rec) %> <%= (x > 0) ? '<span class="negative">' : '<span class="positive">' %> <%= x %> </span> pezzi
     </td>
   </tr>
 </table>
@@ -180,6 +180,6 @@
   </tr>
 </table>
 <p>
-  <h3 style='text-align:center'><%= link_to 'Indietro', app_path %></h3>
+  <h3 style='text-align:center;padding:5px;background:#fff;margin:15px'><%= link_to 'Indietro', app_path %></h3>
 </p>  
 <% end %>
