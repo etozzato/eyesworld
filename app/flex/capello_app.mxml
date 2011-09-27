@@ -19,9 +19,9 @@
   <mx:LinkBar dataProvider="mainViewStack" direction="horizontal"  cornerRadius="9" dropShadowEnabled="true" borderStyle="solid"
   borderThickness="1" backgroundColor="#D2DBFC" borderColor="#c0c0c0"  includeInLayout="true" />
 	<mx:VDividedBox width="100%" height="17" horizontalAlign="right" liveDragging="false">
-		<mx:LinkButton id="statBtn" label="Statistiche"
-					   click="navigateToURL(new URLRequest('/stat'), '_self')" enabled="true"
-					   paddingLeft="0" styleName="statBtn"/>
+		<mx:LinkButton id="statBtn" width="90" height="20" label="Statistiche"
+					   click="navigateToURL(new URLRequest('/stat'), '_self')" color="#F90000"
+					   enabled="true" paddingLeft="0" styleName="statBtn" themeColor="#FFFFFF"/>
 	</mx:VDividedBox>
 	<mx:ViewStack id="mainViewStack" width="100%">
     <generated:OrderBox/>
